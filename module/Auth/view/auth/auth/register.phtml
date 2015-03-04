@@ -1,0 +1,138 @@
+<?php
+$title = 'Signup';
+$this->headTitle($title);
+?>
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url(
+		'register/process',
+		array(
+				'action'     => 'create-user',
+		)
+));
+$form->prepare();
+?>
+
+<div class="mainLoginContainer">
+
+		<div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 pull-right">
+
+
+		<div class="topCenterLogo">
+
+			<div class="logo">
+				<img src="<?php echo $this->basepath('images/logobig.png');?>"
+					class="img-responsive" alt="">
+			</div>
+		</div>
+		</div>
+		<div class="col-lg-7 col-md-7 col-sm-12 col-xs-12 pull-left">
+		<div class="mainLoginWelcome">Register</div>
+		</div>
+
+		
+<div class="clearfix"></div>
+	
+	<div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 pull-right">
+
+
+		
+
+		<div class="clear"></div>
+
+		<div class="LoginPanelMain">
+			<div class="LoginPanelForm">
+            <?php echo $this->form()->openTag($form);?>
+                <div class="LoginPaneltext">
+                    <?php echo $this->formRow($form->get('firstname'));?>
+                </div>
+				<div class="LoginPaneltext">
+                    <?php echo $this->formRow($form->get('lastname'));?>
+                </div>
+				<div class="LoginPaneltext">
+                    <?php echo $this->formRow($form->get('email_id'));?>
+                </div>
+				<div class="LoginPanelpass">
+                    <?php echo $this->formRow($form->get('password'));?>
+                </div>
+				<div class="LoginPanelpass">
+                    <?php echo $this->formRow($form->get('confirm_password'));?>
+                </div>
+				<div class="clearfix"></div>
+				<div class="LoginPanelpass">
+				  <span>Date of Birth:</span>
+				</div>
+				<div class="LoginPanelFormSelect dob">
+                    <?php echo $this->formRow($form->get('dob[day]'));?>
+                </div>
+				<div class="LoginPanelFormSelect dob">
+                   <?php echo $this->formRow($form->get('dob[month]'));?>
+                </div>
+				<div class="LoginPanelFormSelect dob">
+                    <?php echo $this->formRow($form->get('dob[year]'));?>
+                </div>
+				<div class="clearfix"></div>
+				
+				<div class="LoginPanelFormSelect">
+                    <?php echo $this->formRow($form->get('country'));?>
+                </div>
+                <div class="LoginPanelFormSelect">
+                    <?php echo $this->formRow($form->get('gender'));?>
+                </div>
+                 <div class="signupformfilepic">
+                 <div class="registuserphoto"><a href="">Add Profile Picture</a>
+                    <?php echo $this->formRow($form->get('profile_pic'));?>
+                 </div>
+                    <span id="previewName"></span>
+                </div>
+                
+				<div class="loginTextBtn"><?php echo $this->formSubmit($form->get('submit'));?></div>
+				<div class="clearfix"></div>
+                <?php
+                if ($this->messages){
+                ?>
+                <div
+					class="authentication__alert alert alert-warning alert-danger"
+					role="alert">
+					<button type="button" class="close" data-dismiss="alert">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+                	<?php 
+                	echo '<ul>';
+                	foreach($this->messages as $message)
+                	{
+                		echo '<li>'.$message.'</li>';
+                	}
+                	echo '</ul>';
+                	?>
+                </div>
+                <?php
+                }
+                ?>
+            <?php echo $this->form()->closeTag();?>
+            </div>
+		</div>
+		<div class="loginBotomTextP">
+			Already have an account? <a
+				href="<?php echo $this->basepath('');?>">Sign in
+				now</a>
+		</div>
+
+	</div>
+	<div class="col-lg-7 col-md-7 col-sm-12 col-xs-12 pull-left">
+		
+		  <div class="clear"></div>
+		  <div class="loginIframe">
+    		  <iframe src="http://scroller.connekd.com/" ></iframe>
+    		 <?php 
+//     		      $file = file_get_contents ('http://scroller.connekd.com/');  
+//     		      echo $file;
+    		 ?>
+		  </div>
+	</div>
+</div>
+<?php
+$this->inlineScript ()->prependFile ( $this->basePath () . '/js/sponsor/guest_form_validations.js' );
+$this->inlineScript ()->prependFile ( $this->basePath () . '/js/common/customFormValidators.js' );
+$this->inlineScript ()->prependFile ( $this->basePath () . '/js/jquery.validate.js' );
+?>

@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Notification email template</title>
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,400,600,700,300|Roboto:500,400italic,300,700,500italic,300italic,400' rel='stylesheet' type='text/css'>
+<style type="text/css">
+	body{ font-family: 'Roboto', Arial, Helvetica, sans-serif; }
+</style>
+</head>
+
+<body bgcolor="#8d8e90">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#333">
+  <tr>
+    <td><table width="600" border="0" cellspacing="0" cellpadding="0" bgcolor="#fffff" align="center" >
+      
+        <tr>
+          <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="100%"><img src="<?php echo BASE_URL.'images/emailHeader.jpg';?>" alt="linkedin" width="100%" border="0" /></td>
+                
+              </tr>
+            </table></td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%">&nbsp;</td>
+                <td width="90%" align="left" valign="top">
+                <font style="color:#45c8dc; font-size:24px"><strong style="font-weight:500"><em>Hi <?php echo $this->company_name;?>,</em></strong></font><br /><hr style=" border-color:#BFBFBF" /><br />
+                  <font style="font-family: 'Open Sans',arial,  sans-serif; color:#3b3b3b; font-size:20px; line-height:24px">
+                  	<strong style="margin-bottom:15px; display:inline-block; font-weight:500"><?php echo $this->heading;?></strong>
+                  </font>
+                  <br />
+                  <font style="font-family: 'Open Sans', arial, sans-serif; color:#3b3b3b; font-size:13px; line-height:21px">
+                  <?php echo $this->message;?> 
+<br />	
+</font>
+
+<font style="font-family: 'Open Sans', sans-serif; color:#fff; font-size:13px; line-height:21px">
+Thanks &amp; Regards,<br />
+Connekd Team</font></td>
+                <td width="5%">&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td align="right" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+                  <tr>
+                    <td align="center"><br /><font style="font-family: 'Open Sans', sans-serif; color:#3b3b3b; font-size:13px; line-height:21px"><i>Need help? Have feedback? Feel free to email us at <a href="#" style=" color:#45c8dc">connekd@connekd.com</a></i></font><br /><br /></td>
+                  </tr>
+                  
+                  
+                  
+                </table>
+                </td>
+                <td>&nbsp;</td>
+              </tr>
+            </table></td>
+        </tr>
+        
+        <tr>
+          <td>&nbsp;</td>
+        </tr>
+       
+        <tr>
+          <td><table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-family: 'Open Sans', Arial, sans-serif"  bgcolor="#eee">
+          	<tr>
+            	<td colspan="3">&nbsp;
+                
+                </td>
+            
+            </tr>
+              <tr>
+                
+                
+                <td width="60%" align="center"><font style=" color:#fff; font-size:9px; text-transform:uppercase; font-family: 'Open Sans', sans-serif;">
+                <a href= "<?php echo BASE_URL;?>" style="color:#3b3b3b; text-decoration:none; padding-right:10px">Home </a>
+                <?php if($this->pages):?>
+                	<?php foreach ($this->pages as $page):?>
+                		<a href= "<?php echo BASE_URL.'pages/'.$page['route'];?>" style="color:#3b3b3b; text-decoration:none; padding-right:10px"><?php echo $page['title'];?> </a>		
+                	<?php endforeach;?>
+                <?php endif;?>
+				<a href="<?php echo BASE_URL.'pages/contact-us'; ?>" style="color:#3b3b3b; text-decoration:none; padding-right:10px">Contact Us</a>
+                </font></td>
+                
+                
+                
+                <td width="38%" align="right" valign="middle">
+                
+                <a href="#" style=" width:30px; height:30px; display:inline-block;" target="_blank"><img src="<?php echo BASE_URL.'images/emailsoc1.png';?>" alt="facebook" border="0" /></a>
+                <a href="#" style=" width:30px; height:30px; display:inline-block;" target="_blank"><img src="<?php echo BASE_URL.'images/emailsoc2.png';?>" alt="Twitter"  border="0" /></a>
+                <a href="#" style=" width:30px; height:30px; display:inline-block;" target="_blank"><img src="<?php echo BASE_URL.'images/emailsoc3.png';?>" alt="Linkedin" border="0" /></a>
+                <a href="#" style=" width:30px; height:30px; display:inline-block;" target="_blank"><img src="<?php echo BASE_URL.'images/emailsoc4.png';?>" alt="Youtube" border="0" /></a>
+                </td>
+                  <td width="2%" align="right" valign="middle">&nbsp;</td>
+              </tr>
+             </table></td>
+        </tr>
+        
+<!--         <tr> -->
+<!--           <td align="center" bgcolor="#eee"> -->
+         <!--  <font style="color:#3b3b3b; font-size:10px">Head Office &amp; Registered Office | Company name Ltd, Adress Line, Company Street, City, State, Zip Code | Tel: 123 555 555 </font></td>  -->
+<!--         </tr> -->
+        <tr>
+          <td bgcolor="#eee">&nbsp;</td>
+        </tr>
+      </table></td>
+  </tr>
+</table>
+</body>
+</html>

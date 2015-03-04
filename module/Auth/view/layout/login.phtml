@@ -1,0 +1,73 @@
+<?php echo $this->doctype(); ?>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+        <?php echo $this->headTitle('Connekd - '. $this->translate('Admin'))->setSeparator(' - ')->setAutoEscape(false)?>
+   		<?php
+    
+echo $this->headMeta()
+        ->appendName('viewport', 'width=device-width, initial-scale=1.0, maximum-scale=1.0')
+        ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')?>
+    <meta name="description" content="">
+<meta name="author" content="">
+
+
+<!-- Le styles -->
+        <?php
+        
+echo $this->headLink(array(
+            'rel' => 'shortcut icon',
+            'type' => 'image/vnd.microsoft.icon',
+            'href' => $this->basePath() . '/images/favicon.ico'
+        ))
+            ->prependStylesheet($this->basePath() . '/css/style.default.css')
+        ?>
+		
+
+  </head>
+<body class="signin">
+
+	<!-- Preloader -->
+	
+
+	<section>
+
+		<div class="signinpanel">
+            <div class="row">
+				<div class="col-md-7">
+					<div class="signin-info">
+						<div class="logopanel">
+							<div class="logo">
+								<b>LOGO</b>
+							</div>
+							<h1>
+								<span>[</span> Admin <span>]</span>
+							</h1>
+						</div>
+						<div class="mb20"></div>
+					</div>
+				</div>
+                <?php echo $this->content;?>
+			</div>
+			<!-- row -->
+
+		
+
+		</div>
+		<!-- signin -->
+
+	</section>
+<?php
+echo $this->inlineScript()
+    ->prependFile($this->basePath() . '/js/custom.js')
+    ->prependFile($this->basePath() . '/js/jquery.cookies.js')
+    ->prependFile($this->basePath() . '/js/retina.min.js')
+    ->prependFile($this->basePath() . '/js/toggles.min.js')
+    ->prependFile($this->basePath() . '/js/jquery.sparkline.min.js')
+    ->prependFile($this->basePath() . '/js/modernizr.min.js')
+    ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+    ->prependFile($this->basePath() . '/js/jquery-migrate-1.2.1.min.js')
+    ->prependFile($this->basePath() . '/js/jquery-1.11.1.min.js');
+?>
+</body>
+</html>

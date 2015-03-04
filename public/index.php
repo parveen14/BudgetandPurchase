@@ -1,4 +1,16 @@
-<?php
+<?php 
+defined('APPLICATION_ROOT')
+|| define('APPLICATION_ROOT', realpath(__DIR__ . '/../'));
+
+defined('BASE_URL')
+|| define('BASE_URL', 'http://budgetandpurchase.local.com/');
+
+defined('PUBLIC_PATH')
+|| define('PUBLIC_PATH', null);
+
+defined('PROJECT_NAME')
+|| define('PROJECT_NAME', '');
+ini_set('display_errors', true);
 /**
  * This makes our life easier when dealing with paths. Everything is relative
  * to the application root now.
