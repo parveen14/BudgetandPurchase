@@ -1,0 +1,135 @@
+<?php $this->headTitle(($this->businessunit_id ? 'Edit Business Unit' : 'Add Business Unit'));
+
+	if(isset($this->businessunit['business_department']) and !empty($this->businessunit['business_department'])) {
+		$businessunit=$this->businessunit['business_department'];
+		$businesunitarray = array_map(function ($businessunit) { return $businessunit['department_id']; }, $businessunit);
+	} else {
+		$businesunitarray=array();
+	}
+	
+	if(isset($this->businessunit['business_project']) and !empty($this->businessunit['business_project'])) {
+		$businessunit=$this->businessunit['business_project'];
+		$projectarray = array_map(function ($businessunit) { return $businessunit['project_id']; }, $businessunit);
+	} else {
+		$projectarray=array();
+	}
+	
+	if(isset($this->businessunit['business_location']) and !empty($this->businessunit['business_location'])) {
+		$businessunit=$this->businessunit['business_location'];
+		$locationarray = array_map(function ($businessunit) { return $businessunit['location_id']; }, $businessunit);
+	} else {
+		$locationarray=array();
+	}
+?>
+<div class="pageheader">
+	<h2>
+		<i class="fa fa-file"></i> Business Unit <span><?php echo ($this->businessunit_id ? 'Edit' : 'Add'); ?></span>
+	</h2>
+	<div class="breadcrumb-wrapper">
+		<span class="label">You are here:</span>
+		<ol class="breadcrumb">
+			<li><a href="<?php echo $this->basePath('user');?>">User</a></li>
+			<li><a href="<?php echo $this->basePath('user/department');?>">Department</a></li>
+			<li class="active"><?php echo ($this->businessunit_id ? 'Edit' : 'Add'); ?></li>
+		</ol>
+	</div>
+</div>
+
+<div class="contentpanel">
+	<!-- content goes here... -->
+	<div class="panel panel-default">
+
+	<div class="panel-heading">
+          <div class="panel-btns">
+            <a href="" class="panel-close">&times;</a>
+            <a href="" class="minimize">&minus;</a>
+          </div>
+          <h4 class="panel-title"><?php echo ($this->businessunit_id ? 'Edit' : 'Add'); ?> Business Unit</h4>
+        </div>
+		 <form id="addBusinessunitForm" name="addBusinessunitForm" class="form-horizontal form-bordered" method="POST" enctype="multipart/form-data">
+        <div class="panel-body panel-body-nopadding">
+            <?php echo ($this->businessunit_id ? '<input type="hidden" value="'.$this->businessunit_id.'" name="businessunit_id" />' : '');?>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Title</label>
+              <div class="col-sm-6">
+                <input type="text" placeholder="Enter Title" class="form-control" name="title" id="title" value="<?php echo $this->businessunit['title'];?>"/>
+              </div>
+            </div>
+            <div class="form-group">
+              
+             <label class="col-sm-3 control-label">Description</label>
+              <div class="col-sm-9">
+               
+               <textarea id="description" name="description" placeholder="Enter description here..." class="form-control" rows="10"><?php echo $this->businessunit['description'];?></textarea>
+              
+              </div>
+            </div>  
+			<div class="form-group">
+              
+             <label class="col-sm-3 control-label">Departments</label>
+              <div class="col-sm-4">
+				   <select class="form-control mb15"  id="department" name="department[]" multiple="multiple">
+						<?php
+							foreach($this->department as $departments) {
+								echo "<option value=".$departments['id'];
+								if(in_array($departments['id'],$businesunitarray)) { echo " selected='selected'"; }
+								echo ">".$departments['title']."</option>";
+							}
+						?>
+				   </select>
+              </div>
+            </div>  
+			<div class="form-group">
+             <label class="col-sm-3 control-label">Projects</label>
+              <div class="col-sm-4">
+				   <select class="form-control mb15"  id="project" name="project[]" multiple="multiple">
+						<?php
+							foreach($this->project as $project) {
+								echo "<option value=".$project['id'];
+								if(in_array($project['id'],$projectarray)) { echo " selected='selected'"; }
+								echo ">".$project['title']."</option>";
+							}
+						?>
+				   </select>
+              </div>
+            </div> 
+			<div class="form-group">
+             <label class="col-sm-3 control-label">Locations</label>
+              <div class="col-sm-4">
+				   <select class="form-control mb15"  id="location" name="location[]" multiple="multiple">
+						<?php
+							foreach($this->location as $location) {
+								echo "<option value=".$location['id'];
+								if(in_array($location['id'],$locationarray)) { echo " selected='selected'"; }
+								echo ">".$location['title']."</option>";
+							}
+						?>
+				   </select>
+              </div>
+            </div> 
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Status</label>
+              <div class="col-sm-5">
+               
+                <select  class="form-control mb15" id="pStatus" name="pStatus">
+                  <option value="1">Active</option>
+                  <option value="0" <?php echo (!$this->businessunit['status'] ? 'selected="selected"' : '');?>>Inactive</option>
+                </select>
+              
+              </div>
+            </div>
+        </div><!-- panel-body -->
+        <div class="panel-footer">
+			 <div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+				  <input type="submit" data-after-loading-text="<?php echo ($this->businessunit_id ? 'Update' : 'Add'); ?>" data-loading-text="Please Wait..." id="addPageBtn" name="addPageBtn" value="<?php echo ($this->businessunit_id ? 'Update' : 'Add');?>" class="btn btn-primary">&nbsp;
+				  <a href="<?php echo $this->basepath('user/businessunit');?>" class="btn btn-default">Cancel</a>
+				</div>
+			 </div>
+		  </div><!-- panel-footer -->
+		  </form>
+      </div>
+</div><!-- contentpanel -->
+<?php
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/businessunit.js' );
+?>

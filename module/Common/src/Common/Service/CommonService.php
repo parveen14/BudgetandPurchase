@@ -164,13 +164,8 @@ class CommonService implements CommonServiceInterface
         return $this->mapper->changeStatusTo($table, $status, $where);
     }
 
-    public function getAds($status = NULL)
-    {
-        return $this->mapper->getAds($status);
-    }
-	
-	public function getCrowns($userpoints)
-    {
-        return $this->mapper->getCrowns($userpoints);
+	public function getDatasetsmanyjoin($table, $columns = array(), $where = array(), $params = array())
+	{
+        return $this->mapper->getDatasetsmanyjoin($table, $columns, $where, $params);
     }
 }

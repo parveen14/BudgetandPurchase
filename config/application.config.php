@@ -4,6 +4,7 @@ return array(
     'modules' => array(
         'Application',
         'Auth',
+        'User',
         'Common',
     ),
 

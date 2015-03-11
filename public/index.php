@@ -11,6 +11,7 @@ defined('PUBLIC_PATH')
 defined('PROJECT_NAME')
 || define('PROJECT_NAME', '');
 ini_set('display_errors', true);
+
 /**
  * This makes our life easier when dealing with paths. Everything is relative
  * to the application root now.

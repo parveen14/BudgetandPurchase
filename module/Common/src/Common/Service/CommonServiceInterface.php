@@ -201,6 +201,16 @@ interface CommonServiceInterface {
 	public function createCacheDir($userId);
 	public function emailExists($email_id);
 	public function changeStatusTo($table, $status, $where);
-	public function getAds($status = NULL);
-	public function getCrowns($userpoints);
+	
+	/**
+	 * Get all the records of specified table!
+	 *
+	 * @author Vipul Sharma
+	 * @param string $table        	
+	 * @param array $where        	
+	 * @param array $columns        	
+	 * @param array $params        	
+	 */
+	public function getDatasetsmanyjoin($table, $columns = array(), $where = array(), $params = array());
+
 }

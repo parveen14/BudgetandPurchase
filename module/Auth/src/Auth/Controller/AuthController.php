@@ -23,7 +23,6 @@ class AuthController extends AbstractActionController
 {
     protected $form;
     protected $storage;
-    protected $storage_from_sns;
     protected $authservice;
 	protected $register;    
 	protected $adapter;
@@ -33,35 +32,12 @@ class AuthController extends AbstractActionController
 	
 	public function __construct()
 	{
-	    
-		$this->storage_from_sns = new SessionStorage();
+	   
 		$this->httpadapter = new Http();
 		$this->sessionManger = new SessionManager ();
 	}
 	
 	
-	/**
-	 *
-	 *
-	 * @param DataStorageInterface $storage
-	 *
-	 * @return $this
-	 */
-	public function setStorage(DataStorageInterface $storage)
-	{
-		$this->storage_from_sns = $storage;
-	
-		return $this;
-	}
-	
-	/**
-	 *
-	 * @return DataStorageInterface
-	 */
-	public function getStorage()
-	{
-		return $this->storage_from_sns;
-	}
 	
 	public function getAdapter()
 	{
@@ -112,7 +88,7 @@ class AuthController extends AbstractActionController
        // $plugin = $this->SnsPlugin ();
     	$this->layout('layout/login');
         if ($this->getAuthService()->hasIdentity()) {
-            return $this->redirect()->toRoute('dashboard');
+            return $this->redirect()->toRoute('user');
         }
 
         $form = new AuthenticateForm();
@@ -147,10 +123,9 @@ class AuthController extends AbstractActionController
                 $isActivated = $this->getRegisterService()->checkIfActivated($this->getAuthService()->getAdapter()->getIdentity());
                 if ($result->isValid() && (isset($isActivated['status']) && $isActivated['status'])) {
                     
-                    $user = $this->getAuthService()->getAdapter()->getResultRowObject();
-                    
-                    
-                	$redirect = 'dashboard';
+                   $user = $this->getAuthService()->getAdapter()->getResultRowObject();
+
+                	$redirect = 'user';
 
                     if ($request->getPost('rememberme') == 1 ) {
                         $this->getSessionStorage()->setRememberMe(1);
@@ -158,8 +133,10 @@ class AuthController extends AbstractActionController
                     }
                     $this->getAuthService()->setStorage($this->getSessionStorage());
                     $this->getAuthService()->getStorage()->write($request->getPost('email_id'));
-                    $roles = new Container('roles');
-                    $roles->role = 'users';
+
+                    $userSession = new Container('user');
+                    $userSession->role = 'user';
+                    $userSession->data = $user; 
                 }
                 else{
                     switch ($result->getCode()) {

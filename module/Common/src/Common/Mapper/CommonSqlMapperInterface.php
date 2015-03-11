@@ -66,7 +66,5 @@ interface CommonSqlMapperInterface
 
     public function changeStatusTo($table, $status, $where);
 
-    public function getAds($status = NULL);
-	
-	 public function getCrowns($userpoints);
+	public function getDatasetsmanyjoin($table, $columns = array(), $where = array(), $params = array());
 }

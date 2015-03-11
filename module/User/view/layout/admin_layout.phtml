@@ -1,0 +1,153 @@
+<?php echo $this->doctype(); ?>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+        <?php echo $this->headTitle('Budget & Purchase - '. $this->translate('Admin'))->setSeparator(' - ')->setAutoEscape(false)?>
+   		<?php
+    
+echo $this->headMeta()
+        ->appendName('viewport', 'width=device-width, initial-scale=1.0, maximum-scale=1.0')
+        ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')?>
+    <meta name="description" content="">
+<meta name="author" content="">
+
+
+<!-- Le styles -->
+        <?php
+        
+echo $this->headLink(array(
+            'rel' => 'shortcut icon',
+            'type' => 'image/vnd.microsoft.icon',
+            'href' => $this->basePath() . '/images/favicon.ico'
+        ))
+            ->prependStylesheet($this->basePath() . '/css/style.default.css')
+			->prependStylesheet($this->basePath () . '/css/jquery.datatables.css' )
+			->prependStylesheet($this->basePath () . '/css/developer.css' );
+        ?>
+		
+		
+        <?php
+        
+echo $this->headScript()
+            -> // IE10 viewport hack for Surface/desktop Windows 8 bug
+prependFile($this->basePath() . '/js/html5shiv.js', 'text/javascript', array(
+            'conditional' => 'lt IE 9'
+        ))
+            ->prependFile($this->basePath() . '/js/respond.min.js', 'text/javascript', array(
+            'conditional' => 'lt IE 9'
+        ));
+        ?>
+  </head>
+
+<body>
+
+<!-- Preloader -->
+<div id="preloader">
+    <div id="status"><i class="fa fa-spinner fa-spin"></i></div>
+</div>
+
+<section>
+  
+  <div class="leftpanel">
+    
+    <div class="logopanel">
+        <h1><span>[</span> Admin <span>]</span></h1>
+    </div><!-- logopanel -->
+    
+    <div class="leftpanelinner">
+        
+        <!-- This is only visible to small devices -->
+        <div class="visible-xs hidden-sm hidden-md hidden-lg">   
+            <div class="media userlogged">
+                <img alt="" src="<?php echo $this->basepath('images/photos/loggeduser.png');?>" class="media-object">
+                <div class="media-body">
+                    <h4><?php echo ucfirst($this->userSession->data->username); ?></h4>
+                </div>
+            </div>
+          
+            <h5 class="sidebartitle actitle">Account</h5>
+            <ul class="nav nav-pills nav-stacked nav-bracket mb30">
+              <li><a href="<?php echo $this->basepath('authenticate/logout');?>"><i class="fa fa-sign-out"></i> <span>Sign Out</span></a></li>
+            </ul>
+        </div>
+      
+      <h5 class="sidebartitle">Navigation</h5>
+      <ul class="nav nav-pills nav-stacked nav-bracket">
+
+        <li <?php echo  ($this->url() == '/user' || $this->url() == '/user/dashboard')  ? 'class=active' : '';?>>
+			<a href="<?php echo $this->basepath('/user');?>"><i class="fa fa-home"></i> <span>Dashboard</span></a>
+		</li>
+        <li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/department')  ? 'class=active' : '';?>>
+			<a href="<?php echo $this->basepath('/user/department');?>"><i class="fa fa-building-o"></i> <span>Departments</span></a>
+		</li>
+		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/project')  ? 'class=active' : '';?>>
+			<a href="<?php echo $this->basepath('/user/project');?>"><i class="fa fa-envelope"></i> <span>Projects</span></a>
+		</li>
+		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/location')  ? 'class=active' : '';?>>
+			<a href="<?php echo $this->basepath('/user/location');?>"><i class="fa fa-envelope"></i> <span>Locations</span></a>
+		</li>
+		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/businessunit')  ? 'class=active' : '';?>>
+			<a href="<?php echo $this->basepath('/user/businessunit');?>"><i class="fa fa-briefcase"></i> <span>Business Units</span></a>
+		</li>
+		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/level')  ? 'class=active' : '';?>>
+			<a href="<?php echo $this->basepath('/user/level');?>"><i class="fa fa-sitemap"></i> <span>Levels</span></a>
+		</li>
+		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/group')  ? 'class=active' : '';?>>
+			<a href="<?php echo $this->basepath('/user/group');?>"><i class="fa fa-group"></i> <span>Groups</span></a>
+		</li>
+		
+      </ul>
+      </div>
+    </div>
+
+  <div class="mainpanel">
+    
+    <div class="headerbar">
+      
+      <a class="menutoggle"><i class="fa fa-bars"></i></a>
+      <div class="header-right">
+        <ul class="headermenu">
+          
+         
+          
+          <li>
+            <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <img src="<?php echo $this->basepath('images/photos/loggeduser.png');?>" alt="" />
+                <?php echo ucfirst($this->userSession->data->username); ?>
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-usermenu pull-right">
+                <li><a href="<?php echo $this->basepath('authenticate/logout');?>"><i class="glyphicon glyphicon-log-out"></i> Log Out</a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div><!-- header-right -->
+    </div><!-- headerbar -->
+    <?php echo $this->content;?>
+  </div><!-- mainpanel -->
+</section>
+
+
+
+<?php
+echo $this->inlineScript()
+    ->prependFile ( $this->basePath () . '/js/customFormValidators.js' )
+    ->prependFile ( $this->basePath () . '/js/chosen.jquery.min.js' )
+    ->prependFile ( $this->basePath () . '/js/jquery.datatables.min.js' )
+	->prependFile ( $this->basePath () . '/js/jquery.validate.js' )
+    ->prependFile($this->basePath() . '/js/custom.js')
+    ->prependFile($this->basePath() . '/js/jquery.cookies.js')
+    ->prependFile($this->basePath() . '/js/retina.min.js')
+    ->prependFile($this->basePath() . '/js/toggles.min.js')
+    ->prependFile($this->basePath() . '/js/jquery.sparkline.min.js')
+    ->prependFile($this->basePath() . '/js/modernizr.min.js')
+    ->prependFile ( $this->basePath () . '/js/bootbox.min.js' )
+    ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+    ->prependFile($this->basePath() . '/js/jquery-migrate-1.2.1.min.js')
+    ->prependFile($this->basePath() . '/js/jquery-1.11.1.min.js');
+?>
+
+</body>
+</html>

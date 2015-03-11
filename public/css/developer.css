@@ -1,0 +1,53 @@
+
+.popover-validations.popover {
+	background: rgba(211, 32, 32, 0.8);
+	color: #fff;
+	font-family: "proxima_nova_rgregular";
+}
+
+.popover-validations.popover.top>.arrow:after {
+	border-top-color: rgba(211, 32, 32, 0.8)
+}
+
+.loginSignup .popover-validations.popover {
+	background: rgba(211, 32, 32, 0.8);
+	color: #fff;
+}
+
+.loginSignup .popover-validations.popover.top>.arrow:after {
+	border-top-color: rgba(211, 32, 32, 0.8)
+}
+
+.imgUploadValidation {
+	position: relative;
+}
+
+.imgUploadValidation .popover.popover-validations {
+	top: 28px !important;
+	left: 53px !important;
+}
+
+.imgUploadValidation .popover-validations.popover.top>.arrow:after {
+	left: 18px;
+}
+
+.popover-validations button.close {
+	font-size: 14px;
+	opacity: 0.28;
+	position: absolute;
+	right: -7px;
+	text-align: center;
+	top: 0;
+	width: 30px;
+	color: #1D2027;
+	text-shadow: 0 1px 0 #1D2027;
+	background: none;
+	height: auto;
+	font-family: "proxima_nova_rgregular";
+}
+
+.popover-validations button.close:hover {
+	opacity: 1;
+	color: #1D2027;
+	text-shadow: 0 1px 0 #1D2027;
+}

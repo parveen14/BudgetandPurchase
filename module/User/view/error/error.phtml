@@ -1,0 +1,28 @@
+<?php $this->headTitle('Users');?>
+
+
+<div class="pageheader">
+      <h2><i class="fa fa-bell"></i> Alerts</h2>
+      <div class="breadcrumb-wrapper">
+        <span class="label">You are here:</span>
+        <ol class="breadcrumb">
+          <li><a href="<?php echo $this->basePath('user');?>">Dashboard</a></li>
+          <li class="active">Alerts</li>
+        </ol>
+      </div>
+</div>
+<div class="contentpanel">
+	<div class="row">
+		<div class="panel-body">
+			<div class="alert alert-info fade in nomargin">
+                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                <h4>Alerts!</h4>
+                <p><?php echo $this->errormessage; ?></p>
+                <p>
+                  <a href="<?php echo $this->okbuttonlink; ?>" class="btn btn-info"><?php echo $this->okbutton; ?></a>
+                  <a href="<?php echo $this->cancelbuttonlink; ?>" class="btn btn-white"><?php echo $this->cancelbutton; ?></a>
+                </p>
+              </div>
+		</div>
+	</div>
+</div>

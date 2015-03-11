@@ -80,21 +80,7 @@ class CommonSqlMapper implements CommonSqlMapperInterface
         return 'manu.sharma1222@gmail.com';
     }
 
-    public function getCrowns($userpoints)
-    {
-        $sql = new Sql($this->adapter);
-        $select = $sql->select('crowns')
-            ->where("`points_required` <=$userpoints")
-            ->order('points_required DESC')
-            ->limit(1);
-        $statement = $sql->prepareStatementForSqlObject($select);
-        $result = $statement->execute();
-        
-        if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
-            
-            return $this->hydrator->hydrate($result->current(), new $this->crownsPrototype());
-        }
-    }
+    
 
     public function getFullName($id, $table)
     {
@@ -963,23 +949,85 @@ class CommonSqlMapper implements CommonSqlMapperInterface
             return $result->getAffectedRows();
         }
     }
-
-    public function getAds($status = NULL)
+	
+	public function getDatasetsmanyjoin($table, $columns = array(), $where = array(), $params = array())
     {
         $sql = new Sql($this->adapter);
-        $select = $sql->select('ads');
-        if($status != NULL){
-            $select->where(array(
-                'status' => $status
-            ));
+        $select = $sql->select($table['table1']);
+		//$select->join($table['table2'], $table['table1'].'.'.$table['table1key'] = $table['table2'].'.'.$table['table2key'], array(), 'left');
+        if ($columns) {
+            $select->columns($columns);
         }
-        
+        if ($where) {
+            $select->where($where);
+        }
+        if (isset($params['order_by'])) {
+            $select->order($params['order_by']);
+        }
+        if (isset($params['group_by'])) {
+            $select->group($params['group_by']);
+        }
+        if (isset($params['limit'])) {
+            $select->limit($params['limit']);
+        }
+        if (isset($params['offset'])) {
+            $select->offset($params['offset']);
+        }
         $stmt = $sql->prepareStatementForSqlObject($select);
         $result = $stmt->execute();
-        
         if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
-            $datasets = $result->getResource()->fetchAll(\PDO::FETCH_ASSOC);
-            return $datasets;
+			$returnData= $result->getResource()->fetchAll(\PDO::FETCH_ASSOC);
+			foreach($returnData as $returnDatas){
+			    
+			  if (isset($table['table2']) && !empty($table['table2'])) {
+			    $select = $sql->select($table['table2']);
+			    if (isset($table['table2requiredColumns'])) {
+			        $select->columns($table['table2requiredColumns']);
+			    }
+			    $select->where(array($table['table2key']=>$returnDatas[$table['table1key']]));
+			    $stmt = $sql->prepareStatementForSqlObject($select);
+			    $result = $stmt->execute();
+			    if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
+			        $returnDatas[$table['table2']]= $result->getResource()->fetchAll(\PDO::FETCH_ASSOC);
+			    } else {
+			        $returnDatas[$table['table2']]='';
+			    }
+			  }
+			  
+			  if (isset($table['table3']) && !empty($table['table3'])) {
+			      $select = $sql->select($table['table3']);
+			      if (isset($table['table3requiredColumns'])) {
+			          $select->columns($table['table3requiredColumns']);
+			      }
+			      $select->where(array($table['table3key']=>$returnDatas[$table['table1key']]));
+			      $stmt = $sql->prepareStatementForSqlObject($select);
+			      $result = $stmt->execute();
+			      if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
+			          $returnDatas[$table['table3']]= $result->getResource()->fetchAll(\PDO::FETCH_ASSOC);
+			      } else {
+			          $returnDatas[$table['table3']]='';
+			      }
+			  }
+			  
+			  if (isset($table['table4']) && !empty($table['table4'])) {
+			      $select = $sql->select($table['table4']);
+			      if (isset($table['table4requiredColumns'])) {
+			          $select->columns($table['table4requiredColumns']);
+			      }
+			      $select->where(array($table['table4key']=>$returnDatas[$table['table1key']]));
+			      $stmt = $sql->prepareStatementForSqlObject($select);
+			      $result = $stmt->execute();
+			      if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
+			          $returnDatas[$table['table4']]= $result->getResource()->fetchAll(\PDO::FETCH_ASSOC);
+			      } else {
+			          $returnDatas[$table['table4']]='';
+			      }
+			  }
+			  
+			    $mergeddata[]=$returnDatas;
+			    
+			}
+			return $mergeddata;
         }
     }
 }
