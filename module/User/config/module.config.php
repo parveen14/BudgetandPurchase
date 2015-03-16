@@ -92,6 +92,32 @@ return array(
                     )
                 )
             ),
+            'role' => array (
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array (
+                    'route' => '/user/role',
+                    'defaults' => array (
+                        '__NAMESPACE__' => 'User\Controller',
+                        'controller' => 'User',
+                        'action' => 'role'
+                    )
+                ),
+                'may_terminate' => true,
+                'child_routes' => array (
+                    'process' => array (
+                        'type' => 'Segment',
+                        'options' => array (
+                            'route' => '/[:action][/:slug]',
+                            'constraints' => array (
+                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'slug' => '[a-zA-Z0-9_-]*'
+                            ),
+                            'defaults' => array ()
+                        )
+                    )
+                )
+            ),
             'level' => array (
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array (

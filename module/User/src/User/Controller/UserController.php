@@ -44,14 +44,15 @@ class UserController extends AbstractActionController
     
     public function indexAction()
     {  
-        $totalLevel = $this->commonService->getTotalRecordCount('level');
+        //echo APPLICATION_ROOT; die;
+        $totalRole = $this->commonService->getTotalRecordCount('role');
         $totalGroup = $this->commonService->getTotalRecordCount('group');
         $totalBusinessunit = $this->commonService->getTotalRecordCount('businessunit');
         $totalDepartment = $this->commonService->getTotalRecordCount('department');
         
         $this->layout('layout/admin_layout');
         return new ViewModel(array(
-            'totalLevel' => $totalLevel,
+            'totalRole' => $totalRole,
             'totalGroup' => $totalGroup,
             'totalBusinessunit' => $totalBusinessunit,
             'totalDepartment' => $totalDepartment
@@ -142,13 +143,17 @@ class UserController extends AbstractActionController
         ->getRouteMatch()
         ->getParam('slug');
         $data = array();
-         
+        
+        
         if ($project_id) {
+            $tables['table1']='project';
+            $tables['table1key']='id';
+            $tables['table2']='business_project';
+            $tables['table2key']='project_id';
+            
             $data = array(
                 'project_id' => $project_id,
-                'project' => $this->commonService->getDatasets('project', array(), array(
-                    'id' => $project_id
-                ))[0]
+                'project' => $this->commonService->getDatasetsmanyjoin($tables,'',array('id'=>$project_id))[0]
             );
     
         }
@@ -159,6 +164,7 @@ class UserController extends AbstractActionController
                 'title' => $requestQuery->fromPost('title'),
                 'description' => $requestQuery->fromPost('description'),
                 'project_id' => $requestQuery->fromPost('project_id'),
+                'business_unit' => $requestQuery->fromPost('business_unit'),
                 'status' => $requestQuery->fromPost('pStatus'),
                 'user_id'=> $userSession->data->id,
             );
@@ -171,7 +177,8 @@ class UserController extends AbstractActionController
             return $this->redirect()->toRoute('project');
         }
     
-    
+        $data['businessunit']=$this->commonService->getDatasets('businessunit','',array('user_id'=>$userSession->data->id));
+        
         $this->layout('layout/admin_layout');
         $view = new ViewModel($data);
         $view->setTemplate('user/user/project/add');
@@ -287,10 +294,10 @@ class UserController extends AbstractActionController
         }
         
         $data['department']=$this->commonService->getDatasets('department','',array('user_id'=>$userSession->data->id,'status'=>'1'));
-        $data['project']=$this->commonService->getDatasets('project','',array('user_id'=>$userSession->data->id,'status'=>'1'));
+      //  $data['project']=$this->commonService->getDatasets('project','',array('user_id'=>$userSession->data->id,'status'=>'1'));
         $data['location']=$this->commonService->getDatasets('location','',array('user_id'=>$userSession->data->id,'status'=>'1'));
          
-        if(empty($data['department']) OR empty($data['project'])) {
+        if(empty($data['department'])) {
                $error=array();
                $error['errormessage']='Please add/activate Departments & Projects before adding / editing Business Unit';
                $error['okbutton']='Add Department';
@@ -307,7 +314,7 @@ class UserController extends AbstractActionController
                 'businessunit_id' => $requestQuery->fromPost('businessunit_id'),
                 'status' => $requestQuery->fromPost('pStatus'),
                 'department'=>$requestQuery->fromPost('department'),
-                'project'=>$requestQuery->fromPost('project'),
+              //  'project'=>$requestQuery->fromPost('project'),
                 'location'=>$requestQuery->fromPost('location'),
                 'user_id'=> $userSession->data->id,
             );
@@ -328,51 +335,56 @@ class UserController extends AbstractActionController
     }
     
     
-    public function levelAction() {
+    public function roleAction() {
         
         $userSession = new Container('user');
         $this->layout('layout/admin_layout');
         $tables=array();
-        $tables['table1']='level';
+        $tables['table1']='role';
         $tables['table1key']='id';
-        $tables['table2']='level_permission';
-        $tables['table2key']='level_id';
+        $tables['table2']='role_permission';
+        $tables['table2key']='role_id';
     
         $data= $this->commonService->getDatasetsmanyjoin($tables,'',array('user_id'=>$userSession->data->id));
     
         $view = new ViewModel(array(
-            'levelList'      => $data,
+            'roleList'      => $data,
             'messages'  => $this->flashmessenger()->getMessages(),
             'error_messages' => $this->flashmessenger()->getErrorMessages(),
         ));
-        $view->setTemplate('user/user/level/level');
+        $view->setTemplate('user/user/role/role');
         return $view;
     }
     
-    public function addlevelAction() {
+    public function addroleAction() {
    
         $userSession = new Container('user');
-        $level_id = $this->getEvent()
+        $role_id = $this->getEvent()
         ->getRouteMatch()
         ->getParam('slug');
         $data = array();
         $tables=array();
-        $tables['table1']='level';
+        $parentWhere="user_id=".$userSession->data->id;
+        $tables['table1']='role';
         $tables['table1key']='id';
-        $tables['table2']='level_permission';
-        $tables['table2key']='level_id';
+        $tables['table2']='role_permission';
+        $tables['table2key']='role_id';
         $tables['table2requiredColumns']=array('permission_id');
-        if ($level_id) {
+        if ($role_id) {
             $data = array(
-                'level_id' => $level_id,
-                'level' => $this->commonService->getDatasetsmanyjoin($tables, array(), array(
-                    'id' => $level_id
+                'role_id' => $role_id,
+                'role' => $this->commonService->getDatasetsmanyjoin($tables, array(), array(
+                    'id' => $role_id
                 ))[0]
             );
+            
+            $parentWhere .=" AND id!=".$role_id;
     
-        }
-    
+        } 
+        
+        $data['parentroles']= $this->commonService->getDatasets('role','',$parentWhere);
         $data['permission']=$this->commonService->getDatasets('permission','','');
+        $data['levels']=$this->commonService->getDatasets('level','','');
          
         if(empty($data['permission'])) {
             $error=array();
@@ -386,20 +398,90 @@ class UserController extends AbstractActionController
         if($this->getRequest()->isPost()) {
             $requestQuery = $this->params();
     
-            $levelData = array(
+            $roleData = array(
+                'title' => $requestQuery->fromPost('title'),
+                'level_id' => $requestQuery->fromPost('level_id'),
+                'parent_role' => $requestQuery->fromPost('parent_role'),
+                'status' => $requestQuery->fromPost('pStatus'),
+                'permission'=>$requestQuery->fromPost('permission'),
+                'role_id'=> $requestQuery->fromPost('role_id'),
+                'user_id'=> $userSession->data->id,
+            );
+            $return=$this->userService->addRole($roleData);
+            if($return['success']) {
+                $this->flashmessenger()->addMessage('Role '. ucfirst($return['type']) .' Successfully');
+            } else {
+                $this->flashmessenger()->addErrorMessage('Error while adding role');
+            }
+            return $this->redirect()->toRoute('role');
+        }
+    
+    
+        $this->layout('layout/admin_layout');
+        $view = new ViewModel($data);
+        $view->setTemplate('user/user/role/add');
+        return $view;
+    }
+    
+    public function levelAction() {
+    
+        $userSession = new Container('user');
+        $this->layout('layout/admin_layout');
+        $tables=array();
+        $tables['table1']='level';
+        $tables['table1key']='id';
+    
+        $data= $this->commonService->getDatasetsmanyjoin($tables,'',array('user_id'=>$userSession->data->id));
+    
+        $view = new ViewModel(array(
+            'levelList'      => $data,
+            'messages'  => $this->flashmessenger()->getMessages(),
+            'error_messages' => $this->flashmessenger()->getErrorMessages(),
+        ));
+        $view->setTemplate('user/user/level/level');
+        return $view;
+    }
+    
+    
+    public function addlevelAction() {
+        
+        $userSession = new Container('user');
+        $level_id = $this->getEvent()
+        ->getRouteMatch()
+        ->getParam('slug');
+        $data = array();
+        $tables=array();
+        $parentWhere="user_id=".$userSession->data->id;
+        $tables['table1']='level';
+        $tables['table1key']='id';
+
+        if ($level_id) {
+            $data = array(
+                'level_id' => $level_id,
+                'level' => $this->commonService->getDatasetsmanyjoin($tables, array(), array(
+                    'id' => $level_id
+                ))[0]
+            );
+        }
+    
+         
+       
+        if($this->getRequest()->isPost()) {
+            $requestQuery = $this->params();
+    
+            $roleData = array(
                 'title' => $requestQuery->fromPost('title'),
                 'budget_min' => $requestQuery->fromPost('budget_min'),
                 'budget_max' => $requestQuery->fromPost('budget_max'),
                 'status' => $requestQuery->fromPost('pStatus'),
-                'permission'=>$requestQuery->fromPost('permission'),
                 'level_id'=> $requestQuery->fromPost('level_id'),
                 'user_id'=> $userSession->data->id,
             );
-            $return=$this->userService->addLevel($levelData);
+            $return=$this->userService->addLevel($roleData);
             if($return['success']) {
                 $this->flashmessenger()->addMessage('Level '. ucfirst($return['type']) .' Successfully');
             } else {
-                $this->flashmessenger()->addErrorMessage('Error while adding level');
+                $this->flashmessenger()->addErrorMessage('Error while adding role');
             }
             return $this->redirect()->toRoute('level');
         }
@@ -418,7 +500,7 @@ class UserController extends AbstractActionController
         $tables=array();
         $tables['table1']='group';
         $tables['table1key']='id';
-        $tables['table2']='group_level';
+        $tables['table2']='group_role';
         $tables['table2key']='group_id';
     
         $data= $this->commonService->getDatasetsmanyjoin($tables,'',array('user_id'=>$userSession->data->id));
@@ -442,9 +524,9 @@ class UserController extends AbstractActionController
         $tables=array();
         $tables['table1']='group';
         $tables['table1key']='id';
-        $tables['table2']='group_level';
+        $tables['table2']='group_role';
         $tables['table2key']='group_id';
-        $tables['table2requiredColumns']=array('level_id');
+        $tables['table2requiredColumns']=array('role_id');
         if ($group_id) {
             $data = array(
                 'group_id' => $group_id,
@@ -455,15 +537,15 @@ class UserController extends AbstractActionController
     
         }
     
-        $data['level']=$this->commonService->getDatasets('level','',array('user_id'=>$userSession->data->id,'status'=>1));
+        $data['role']=$this->commonService->getDatasets('role','',array('user_id'=>$userSession->data->id,'status'=>1));
          
-        if(empty($data['level'])) {
+        if(empty($data['role'])) {
             $error=array();
-            $error['errormessage']='Please add Levels before adding / editing Group.';
-            $error['okbutton']='Add Level';
-            $error['okbuttonlink']=$this->getRequest()->getBaseUrl().'/user/level/addlevel';
+            $error['errormessage']='Please add Roles before adding / editing Group.';
+            $error['okbutton']='Add Role';
+            $error['okbuttonlink']=$this->getRequest()->getBaseUrl().'/user/role/addrole';
             $error['cancelbutton']='Cancel';
-            $error['cancelbuttonlink']=$this->getRequest()->getBaseUrl().'/user/level';
+            $error['cancelbuttonlink']=$this->getRequest()->getBaseUrl().'/user/role';
             return $this->showerror($error);
         }
         if($this->getRequest()->isPost()) {
@@ -473,7 +555,7 @@ class UserController extends AbstractActionController
                 'title' => $requestQuery->fromPost('title'),
                 'description' => $requestQuery->fromPost('description'),
                 'status' => $requestQuery->fromPost('pStatus'),
-                'level'=>$requestQuery->fromPost('level'),
+                'role'=>$requestQuery->fromPost('role'),
                 'group_id'=> $requestQuery->fromPost('group_id'),
                 'user_id'=> $userSession->data->id,
             );
@@ -491,6 +573,31 @@ class UserController extends AbstractActionController
         $view = new ViewModel($data);
         $view->setTemplate('user/user/group/add');
         return $view;
+    }
+    
+    public function changestatusAction() {
+        try {
+            $request = $this->getRequest();
+            if($request->isXmlHttpRequest()){
+                $userSession = new Container('user');
+    	        $data = $request->getPost();
+    	        if(isset($data['type']) && !empty($data['type'])){
+    	            $status= (($data['status']=='1')?'0':'1');
+    	            $where=array('id'=>$data['id'],'user_id'=>$userSession->data->id);
+                	   if ($this->commonService->changeStatusTo($data['type'], $status, $where)) {
+                            $result['success'] = TRUE;
+                            $result['status'] = $status;
+                        } else {
+                            new \Exception('Something might went wrong');
+                        }
+    	        }
+    	    }
+        } catch (\Exception $e) {
+            $result = array(
+                'exception_message' => $e->getMessage()
+            );
+        }
+	    return new JsonModel($result);
     }
     
     private function showerror($errorMessage=array()) {

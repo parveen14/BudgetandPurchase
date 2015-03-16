@@ -34,9 +34,9 @@ class UserService implements UserServiceInterface {
         return $this->userMapper->addBusinessunit($data);
     } 
     
-    public function addLevel($data) {
+    public function addRole($data) {
     
-        return $this->userMapper->addLevel($data);
+        return $this->userMapper->addRole($data);
     }
     
     public function addGroup($data) {
@@ -47,6 +47,11 @@ class UserService implements UserServiceInterface {
     public function addLocation($data) {
     
         return $this->userMapper->addLocation($data);
+    }
+    
+    public function addLevel($data) {
+    
+        return $this->userMapper->addLevel($data);
     }
 }
 

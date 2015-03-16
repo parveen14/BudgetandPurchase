@@ -13,12 +13,13 @@ interface UserServiceInterface {
     
     public function addBusinessunit($data);
     
-    public function addLevel($data);
+    public function addRole($data);
     
     public function addGroup($data);
     
     public function addLocation($data);
     
+    public function addLevel($data);
 }
 
 ?>

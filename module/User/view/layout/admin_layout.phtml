@@ -80,17 +80,20 @@ prependFile($this->basePath() . '/js/html5shiv.js', 'text/javascript', array(
         <li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/department')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user/department');?>"><i class="fa fa-building-o"></i> <span>Departments</span></a>
 		</li>
-		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/project')  ? 'class=active' : '';?>>
-			<a href="<?php echo $this->basepath('/user/project');?>"><i class="fa fa-envelope"></i> <span>Projects</span></a>
-		</li>
 		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/location')  ? 'class=active' : '';?>>
-			<a href="<?php echo $this->basepath('/user/location');?>"><i class="fa fa-envelope"></i> <span>Locations</span></a>
+			<a href="<?php echo $this->basepath('/user/location');?>"><i class="fa fa-location-arrow"></i> <span>Locations</span></a>
 		</li>
 		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/businessunit')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user/businessunit');?>"><i class="fa fa-briefcase"></i> <span>Business Units</span></a>
 		</li>
+		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/project')  ? 'class=active' : '';?>>
+			<a href="<?php echo $this->basepath('/user/project');?>"><i class="fa fa-envelope"></i> <span>Projects</span></a>
+		</li>
 		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/level')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user/level');?>"><i class="fa fa-sitemap"></i> <span>Levels</span></a>
+		</li>
+		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/role')  ? 'class=active' : '';?>>
+			<a href="<?php echo $this->basepath('/user/role');?>"><i class="fa fa-sitemap"></i> <span>Roles</span></a>
 		</li>
 		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/group')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user/group');?>"><i class="fa fa-group"></i> <span>Groups</span></a>
@@ -133,17 +136,17 @@ prependFile($this->basePath() . '/js/html5shiv.js', 'text/javascript', array(
 
 <?php
 echo $this->inlineScript()
-    ->prependFile ( $this->basePath () . '/js/customFormValidators.js' )
-    ->prependFile ( $this->basePath () . '/js/chosen.jquery.min.js' )
-    ->prependFile ( $this->basePath () . '/js/jquery.datatables.min.js' )
-	->prependFile ( $this->basePath () . '/js/jquery.validate.js' )
+    ->prependFile($this->basePath() . '/js/customFormValidators.js' )
+    ->prependFile($this->basePath() . '/js/chosen.jquery.min.js' )
+    ->prependFile($this->basePath() . '/js/jquery.datatables.min.js' )
+	->prependFile($this->basePath() . '/js/jquery.validate.js' )
     ->prependFile($this->basePath() . '/js/custom.js')
     ->prependFile($this->basePath() . '/js/jquery.cookies.js')
     ->prependFile($this->basePath() . '/js/retina.min.js')
     ->prependFile($this->basePath() . '/js/toggles.min.js')
     ->prependFile($this->basePath() . '/js/jquery.sparkline.min.js')
     ->prependFile($this->basePath() . '/js/modernizr.min.js')
-    ->prependFile ( $this->basePath () . '/js/bootbox.min.js' )
+    ->prependFile($this->basePath() . '/js/bootbox.min.js' )
     ->prependFile($this->basePath() . '/js/bootstrap.min.js')
     ->prependFile($this->basePath() . '/js/jquery-migrate-1.2.1.min.js')
     ->prependFile($this->basePath() . '/js/jquery-1.11.1.min.js');

@@ -1,10 +1,10 @@
 <?php $this->headTitle(($this->businessunit_id ? 'Edit Business Unit' : 'Add Business Unit'));
 
-	if(isset($this->group['group_level']) and !empty($this->group['group_level'])) {
-		$grouparray=$this->group['group_level'];
-		$levelsarray = array_map(function ($grouparray) { return $grouparray['level_id']; }, $grouparray);
+	if(isset($this->group['group_role']) and !empty($this->group['group_role'])) {
+		$grouparray=$this->group['group_role'];
+		$rolesarray = array_map(function ($grouparray) { return $grouparray['role_id']; }, $grouparray);
 	} else {
-		$levelsarray=array();
+		$rolesarray=array();
 	}
 ?>
 <div class="pageheader">
@@ -54,12 +54,12 @@
               
              <label class="col-sm-3 control-label">Levels</label>
               <div class="col-sm-4">
-				   <select class="form-control mb15"  id="level" name="level[]" multiple="multiple">
+				   <select class="form-control mb15"  id="role" name="role[]" multiple="multiple">
 						<?php
-							foreach($this->level as $levels) {
-								echo "<option value=".$levels['id'];
-								if(in_array($levels['id'],$levelsarray)) { echo " selected='selected'"; }
-								echo ">".$levels['title']."</option>";
+							foreach($this->role as $roles) {
+								echo "<option value=".$roles['id'];
+								if(in_array($roles['id'],$rolesarray)) { echo " selected='selected'"; }
+								echo ">".$roles['title']."</option>";
 							}
 						?>
 				   </select>

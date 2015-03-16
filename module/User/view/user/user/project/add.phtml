@@ -24,7 +24,7 @@
           </div>
           <h4 class="panel-title"><?php echo ($this->project_id ? 'Edit' : 'Add'); ?> Project</h4>
         </div>
-		 <form id="addDepartmentForm" name="addDepartmentForm" class="form-horizontal form-bordered" method="POST" enctype="multipart/form-data">
+		 <form id="addProjectForm" name="addProjectForm" class="form-horizontal form-bordered" method="POST" enctype="multipart/form-data">
         <div class="panel-body panel-body-nopadding">
             <?php echo ($this->project_id ? '<input type="hidden" value="'.$this->project_id.'" name="project_id" />' : '');?>
             <div class="form-group">
@@ -42,6 +42,28 @@
               
               </div>
             </div>     
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Business Unit</label>
+              <div class="col-sm-5">
+               
+                <select  class="form-control mb15" id="business_unit" name="business_unit">
+                  <option value="">Assing project to business unit</option> 
+                  <?php if(is_array($this->businessunit)) { 
+                        foreach($this->businessunit as $businessunit) {
+                      ?>
+                    <option value="<?php echo $businessunit['id']; ?>"
+                    
+                    <?php if(isset($this->project['business_project']) && is_array($this->project['business_project'])) {
+                           if($this->project['business_project'][0]['businessunit_id']==$businessunit['id']) {
+                            echo "selected=selected";
+                        }
+                    } ?>
+                    ><?php echo $businessunit['title']; ?></option>
+                  <?php } } ?>
+                </select>
+              
+              </div>
+            </div>
             <div class="form-group">
               <label class="col-sm-3 control-label">Status</label>
               <div class="col-sm-5">

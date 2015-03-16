@@ -21,16 +21,8 @@ jQuery(document).ready(function(){
                 required: true,
                 maxlength: 50
             },
-			budget_min: {
+			level_id: {
                 required: true,
-				digits: true,
-				lessthan: '#budget_max'
-            },
-			budget_max: {
-                required: true,
-				digits: true,
-				greaterthan: '#budget_min',
-				min: 1
             },
 			'permission[]': {
                 required: true
@@ -43,15 +35,8 @@ jQuery(document).ready(function(){
         	title: {
                 required: "Please enter title."
             },
-			budget_min: {
-                required: "Please add minimum budget.",
-				digits: "Please add integer value only.",
-				lessthan: "This value should be less than maximum budget value."
-            },
-			budget_max: {
-                required: "Please add maximum budget.",
-				digits: "Please add integer value only.",
-				greaterthan: "This value should be greater than minimum budget value."
+			level_id: {
+                required: "Please select level for role.",
             },
 			'permission[]': {
                 required: "Please select permissions."

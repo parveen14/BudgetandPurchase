@@ -8,7 +8,7 @@
 		<ol class="breadcrumb">
 			<li><a href="<?php echo $this->basePath('user');?>">Dashboard</a></li>
 			<li class="active">Groups</li>
-			<li><a href="/user/group/addgroup" class="btn btn-success btn-xs">Add New Group</a></li>
+			<li><a href="<?php echo BASE_URL; ?>user/group/addgroup" class="btn btn-success btn-xs">Add New Group</a></li>
 		</ol>
 	</div>
 </div>
@@ -55,8 +55,8 @@
  							$statusImage='<img data-tooltip="tooltip" src="'.$this->basePath ().'/images/status_red.png"  alt="Deactive" data-original-title="De-active , click here to Activate">';
 				
  						 }
- 						 $Listing .= '<td class="center"><a href="javascript:;" class="userstatus" 
-                                             data-user-id='.$groupList['id'].' data-user-type="users" data-user-status='.$groupList['status'].'>'.$statusImage.'</a></td>';
+ 						 $Listing .= '<td class="center"><a href="javascript:;" class="activeDeactive" 
+                                             data-id='.$groupList['id'].' data-type="group" data-status='.$groupList['status'].'>'.$statusImage.'</a></td>';
  						 $Listing .= '<td class="table-action">
 										  <a href="'.$this->basePath().'/user/group/addgroup/'.$groupList['id'].'" alt="Edit" title="Edit"><i class="glyphicon glyphicon-edit"></i></a>
  										</td>';
@@ -73,5 +73,6 @@
           </div><!-- table-responsive -->
 </div>
 <?php 
+    $this->inlineScript ()->prependFile ( $this->basePath () . '/js/common/common.js' );
     $this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/group.js' );
 ?>

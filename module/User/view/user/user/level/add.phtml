@@ -1,11 +1,6 @@
 <?php $this->headTitle(($this->level_id ? 'Edit Level' : 'Add Level'));
 
-	if(isset($this->level['level_permission']) and !empty($this->level['level_permission'])) {
-		$level_permission=$this->level['level_permission'];
-		$level_permissionarray = array_map(function ($level_permission) { return $level_permission['permission_id']; }, $level_permission);
-	} else {
-		$level_permissionarray=array();
-	}
+	
 ?>
 <div class="pageheader">
 	<h2>
@@ -51,21 +46,7 @@
                 <input type="text" placeholder="Enter Maximum Budget" class="form-control" name="budget_max" id="budget_max" value="<?php echo $this->level['budget_max'];?>"/>
               </div>
             </div>  
-			<div class="form-group">
-              
-             <label class="col-sm-3 control-label">Permissions</label>
-              <div class="col-sm-4">
-				   <select class="form-control mb15"  id="permission" name="permission[]" multiple="multiple">
-						<?php
-							foreach($this->permission as $permission) {
-								echo "<option value=".$permission['id'];
-								if(in_array($permission['id'],$level_permissionarray)) { echo " selected='selected'"; }
-								echo ">".$permission['title']."</option>";
-							}
-						?>
-				   </select>
-              </div>
-            </div>   			
+			
             <div class="form-group">
               <label class="col-sm-3 control-label">Status</label>
               <div class="col-sm-5">
@@ -81,8 +62,8 @@
         <div class="panel-footer">
 			 <div class="row">
 				<div class="col-sm-6 col-sm-offset-3">
-				  <input type="submit" data-after-loading-text="<?php echo ($this->businessunit_id ? 'Update' : 'Add'); ?>" data-loading-text="Please Wait..." id="addPageBtn" name="addPageBtn" value="<?php echo ($this->businessunit_id ? 'Update' : 'Add');?>" class="btn btn-primary">&nbsp;
-				  <a href="<?php echo $this->basepath('user/businessunit');?>" class="btn btn-default">Cancel</a>
+				  <input type="submit" data-after-loading-text="<?php echo ($this->level_id ? 'Update' : 'Add'); ?>" data-loading-text="Please Wait..." id="addPageBtn" name="addPageBtn" value="<?php echo ($this->level_id ? 'Update' : 'Add');?>" class="btn btn-primary">&nbsp;
+				  <a href="<?php echo $this->basepath('user/level');?>" class="btn btn-default">Cancel</a>
 				</div>
 			 </div>
 		  </div><!-- panel-footer -->

@@ -122,8 +122,8 @@ class AuthController extends AbstractActionController
 
                 $isActivated = $this->getRegisterService()->checkIfActivated($this->getAuthService()->getAdapter()->getIdentity());
                 if ($result->isValid() && (isset($isActivated['status']) && $isActivated['status'])) {
-                    
-                   $user = $this->getAuthService()->getAdapter()->getResultRowObject();
+                   $columnsToOmit = array('password');
+                   $user = $this->getAuthService()->getAdapter()->getResultRowObject(null, $columnsToOmit);
 
                 	$redirect = 'user';
 
@@ -131,6 +131,8 @@ class AuthController extends AbstractActionController
                         $this->getSessionStorage()->setRememberMe(1);
                         $this->getAuthService()->setStorage($this->getSessionStorage());
                     }
+                   
+                    
                     $this->getAuthService()->setStorage($this->getSessionStorage());
                     $this->getAuthService()->getStorage()->write($request->getPost('email_id'));
 

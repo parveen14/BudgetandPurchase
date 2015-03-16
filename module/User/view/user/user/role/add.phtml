@@ -1,0 +1,115 @@
+<?php $this->headTitle(($this->role_id ? 'Edit Role' : 'Add Role'));
+
+	if(isset($this->role['role_permission']) and !empty($this->role['role_permission'])) {
+		$role_permission=$this->role['role_permission'];
+		$role_permissionarray = array_map(function ($role_permission) { return $role_permission['permission_id']; }, $role_permission);
+	} else {
+		$role_permissionarray=array();
+	}
+?>
+<div class="pageheader">
+	<h2>
+		<i class="fa fa-file"></i> Role <span><?php echo ($this->role_id ? 'Edit' : 'Add'); ?></span>
+	</h2>
+	<div class="breadcrumb-wrapper">
+		<span class="label">You are here:</span>
+		<ol class="breadcrumb">
+			<li><a href="<?php echo $this->basePath('user');?>">User</a></li>
+			<li><a href="<?php echo $this->basePath('user/role');?>">Role</a></li>
+			<li class="active"><?php echo ($this->role_id ? 'Edit' : 'Add'); ?></li>
+		</ol>
+	</div>
+</div>
+
+<div class="contentpanel">
+	<!-- content goes here... -->
+	<div class="panel panel-default">
+
+	<div class="panel-heading">
+          <div class="panel-btns">
+            <a href="" class="panel-close">&times;</a>
+            <a href="" class="minimize">&minus;</a>
+          </div>
+          <h4 class="panel-title"><?php echo ($this->role_id ? 'Edit' : 'Add'); ?> Role</h4>
+        </div>
+		 <form id="addRoleForm" name="addRoleForm" class="form-horizontal form-bordered" method="POST" enctype="multipart/form-data">
+        <div class="panel-body panel-body-nopadding">
+            <?php echo ($this->role_id ? '<input type="hidden" value="'.$this->role_id.'" name="role_id" />' : '');?>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Title</label>
+              <div class="col-sm-6">
+                <input type="text" placeholder="Enter Title" class="form-control" name="title" id="title" value="<?php echo $this->role['title'];?>"/>
+              </div>
+            </div>
+            <div class="form-group">
+             <label class="col-sm-3 control-label">Level</label>
+              <div class="col-sm-4">
+				   <select class="form-control mb15"  id="level_id" name="level_id">
+						<?php
+							foreach($this->levels as $level) {
+								echo "<option value=".$level['id'];
+								if($level['id']==$this->role['level_id']) { echo " selected='selected'"; }
+								echo ">".$level['title']."</option>";
+							}
+						?>
+				   </select>
+              </div>
+            </div>  
+			<div class="form-group">
+              
+             <label class="col-sm-3 control-label">Permissions</label>
+              <div class="col-sm-4">
+				   <select class="form-control mb15"  id="permission" name="permission[]" multiple="multiple">
+						<?php
+							foreach($this->permission as $permission) {
+								echo "<option value=".$permission['id'];
+								if(in_array($permission['id'],$role_permissionarray)) { echo " selected='selected'"; }
+								echo ">".$permission['title']."</option>";
+							}
+						?>
+				   </select>
+              </div>
+            </div> 
+            <?php if(is_array($this->parentroles)) { ?>  
+            <div class="form-group">
+             <label class="col-sm-3 control-label">Parent Role</label>
+              <div class="col-sm-4">
+				   <select class="form-control mb15"  id="parent_role" name="parent_role">
+				        <option> Select Parent Role (if any) </option>
+						<?php
+							foreach($this->parentroles as $parentroles) {
+								echo "<option value=".$parentroles['id'];
+								if($parentroles['id']==$this->role['parent_role']) { echo " selected='selected'"; }
+								echo ">".$parentroles['title']."</option>";
+							}
+						?>
+				   </select>
+              </div>
+            </div>
+            <?php } ?>			
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Status</label>
+              <div class="col-sm-5">
+               
+                <select  class="form-control mb15" id="pStatus" name="pStatus">
+                  <option value="1">Active</option>
+                  <option value="0" <?php echo (!$this->role['status'] ? 'selected="selected"' : '');?>>Inactive</option>
+                </select>
+              
+              </div>
+            </div>
+        </div><!-- panel-body -->
+        <div class="panel-footer">
+			 <div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+				  <input type="submit" data-after-loading-text="<?php echo ($this->businessunit_id ? 'Update' : 'Add'); ?>" data-loading-text="Please Wait..." id="addPageBtn" name="addPageBtn" value="<?php echo ($this->businessunit_id ? 'Update' : 'Add');?>" class="btn btn-primary">&nbsp;
+				  <a href="<?php echo $this->basepath('user/businessunit');?>" class="btn btn-default">Cancel</a>
+				</div>
+			 </div>
+		  </div><!-- panel-footer -->
+		  </form>
+      </div>
+</div><!-- contentpanel -->
+<?php 
+   $this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/role.js' );
+?>

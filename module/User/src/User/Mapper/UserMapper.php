@@ -129,17 +129,42 @@ class UserMapper implements UserMapperInterface{
                 ->where(array(
                     'id' => $data['project_id']
                 ));
-                $department_id = $data['project_id'];
+                $project_id = $data['project_id'];
                 $type = "update";
             }
         
             $selectString = $sql->getSqlStringForSqlObject($department);
             $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
-        
+            
+            if ((! $data['project_id']) OR empty($data['project_id'])) {
+                $project_id=$this->dbAdapter->getDriver()->getLastGeneratedValue();
+            }
+
+            /****  Assign Business Unit To Project ***/
+            $select = $sql->select('business_project');
+            $select->where(array('project_id'=>$project_id));
+            $stmt = $sql->prepareStatementForSqlObject($select);
+            $result1 = $stmt->execute();
+            if ($result1 instanceof ResultInterface && $result1->isQueryResult() && $result1->getAffectedRows()) {
+                $assignBusinessUnit = $sql->update('business_project')
+                ->set(array('businessunit_id'=>$data['business_unit']))
+                ->where(array(
+                    'project_id' => $project_id
+                ));
+            } else {
+                $assignBusinessUnit = $sql->insert('business_project')
+                ->values(array('businessunit_id'=>$data['business_unit'],'project_id' => $project_id));
+            }
+            
+            $selectString = $sql->getSqlStringForSqlObject($assignBusinessUnit);
+            $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+            
+            /****  End Assign Business Unit To Project ***/
+            
             if ($result) {
                 return array(
                     'success' => $result->getAffectedRows(),
-                    'id' => $department_id,
+                    'id' => $project_id,
                     'type' => $type
                 );
             }
@@ -195,11 +220,11 @@ class UserMapper implements UserMapperInterface{
                      $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
                      
                      
-                     $delete = $sql->delete ( 'business_project' )->where ( array (
-                         'businessunit_id' => $businessunit_id
-                     ) );
-                     $selectString = $sql->getSqlStringForSqlObject($delete);
-                     $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+                   //  $delete = $sql->delete ( 'business_project' )->where ( array (
+                   //      'businessunit_id' => $businessunit_id
+                  //   ) );
+                  //   $selectString = $sql->getSqlStringForSqlObject($delete);
+                  //   $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
                      
                      $delete = $sql->delete ( 'business_location' )->where ( array (
                          'businessunit_id' => $businessunit_id
@@ -216,14 +241,14 @@ class UserMapper implements UserMapperInterface{
                     $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
                 }
                 
-                foreach($data['project'] as $project) {
-                    $business_department=$sql->insert('business_project')->values(array(
-                        'businessunit_id' => $businessunit_id,
-                        'project_id'=> $project
-                    ));
-                    $selectString = $sql->getSqlStringForSqlObject($business_department);
-                    $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
-                }
+//                 foreach($data['project'] as $project) {
+//                     $business_department=$sql->insert('business_project')->values(array(
+//                         'businessunit_id' => $businessunit_id,
+//                         'project_id'=> $project
+//                     ));
+//                     $selectString = $sql->getSqlStringForSqlObject($business_department);
+//                     $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+//                 }
                 
                 foreach($data['location'] as $location) {
                     $business_location=$sql->insert('business_location')->values(array(
@@ -242,17 +267,17 @@ class UserMapper implements UserMapperInterface{
             }
         }
         
-        public function addLevel($data)
+        public function addRole($data)
         {
         
             $sql = new Sql($this->dbAdapter);
              
-            if ((! $data['level_id']) OR empty($data['level_id'])) {
-                $department = $sql->insert('level')->values(array(
+            if ((! $data['role_id']) OR empty($data['role_id'])) {
+                $department = $sql->insert('role')->values(array(
                     'title' => $data['title'],
                     'user_id'=> $data['user_id'],
-                    'budget_min' => $data['budget_min'],
-                    'budget_max' => $data['budget_max'],
+                    'level_id' => $data['level_id'],
+                    'parent_role' => $data['parent_role'],
                     'status' => $data['status'],
                     'created_at' => date('Y-m-d'),
                     'modified_at' => date('Y-m-d')
@@ -263,46 +288,46 @@ class UserMapper implements UserMapperInterface{
                 $values = array(
                     'title' => $data['title'],
                     'user_id' => $data['user_id'],
-                    'budget_min' => $data['budget_min'],
-                    'budget_max' => $data['budget_max'],
+                    'level_id' => $data['level_id'],
+                    'parent_role' => $data['parent_role'],
                     'status' => $data['status'],
                     'modified_at' => date('Y-m-d')
         
                 );
                  
-                $department = $sql->update('level')
+                $department = $sql->update('role')
                 ->set($values)
                 ->where(array(
-                    'id' => $data['level_id']
+                    'id' => $data['role_id']
                 ));
-                $level_id = $data['level_id'];
+                $role_id = $data['role_id'];
                 $type = "update";
             }
         
             $selectString = $sql->getSqlStringForSqlObject($department);
             $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
-            if ((! $data['level_id']) OR empty($data['level_id'])) {
-                $level_id=$this->dbAdapter->getDriver()->getLastGeneratedValue();
+            if ((! $data['role_id']) OR empty($data['role_id'])) {
+                $role_id=$this->dbAdapter->getDriver()->getLastGeneratedValue();
             }
 
             if ($result) {
-                $delete = $sql->delete ( 'level_permission' )->where ( array (
-                    'level_id' => $level_id
+                $delete = $sql->delete ( 'role_permission' )->where ( array (
+                    'role_id' => $role_id
                 ) );
                     $selectString = $sql->getSqlStringForSqlObject($delete);
                      $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
         
                 foreach($data['permission'] as $permission) {
-                    $level_permission=$sql->insert('level_permission')->values(array(
-                        'level_id' => $level_id,
+                    $role_permission=$sql->insert('role_permission')->values(array(
+                        'role_id' => $role_id,
                         'permission_id'=> $permission
                     ));
-                    $selectString = $sql->getSqlStringForSqlObject($level_permission);
+                    $selectString = $sql->getSqlStringForSqlObject($role_permission);
                     $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
                 }
                 return array(
                     'success' => $result->getAffectedRows(),
-                    'id' => $level_id,
+                    'id' => $role_id,
                     'type' => $type
                 );
             }
@@ -350,19 +375,19 @@ class UserMapper implements UserMapperInterface{
             }
         
             if ($result) {
-                $delete = $sql->delete ( 'group_level' )->where ( array (
+                $delete = $sql->delete ( 'group_role' )->where ( array (
                     'group_id' => $group_id
                 ) );
                 $selectString = $sql->getSqlStringForSqlObject($delete);
                 $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
         
-                foreach($data['level'] as $levels) {
+                foreach($data['role'] as $roles) {
                   
-                    $group_level=$sql->insert('group_level')->values(array(
+                    $group_role=$sql->insert('group_role')->values(array(
                         'group_id' => $group_id,
-                        'level_id'=> $levels
+                        'role_id'=> $roles
                     ));
-                    $selectString = $sql->getSqlStringForSqlObject($group_level);
+                    $selectString = $sql->getSqlStringForSqlObject($group_role);
                     $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
                 }
                 return array(
@@ -415,6 +440,57 @@ class UserMapper implements UserMapperInterface{
                 return array(
                     'success' => $result->getAffectedRows(),
                     'id' => $location_id,
+                    'type' => $type
+                );
+            }
+        }
+        
+        
+        public function addLevel($data)
+        {
+        
+            $sql = new Sql($this->dbAdapter);
+             
+            if ((! $data['level_id']) OR empty($data['level_id'])) {
+                $department = $sql->insert('role')->values(array(
+                    'title' => $data['title'],
+                    'user_id'=> $data['user_id'],
+                    'budget_min' => $data['budget_min'],
+                    'budget_max' => $data['budget_max'],
+                    'status' => $data['status'],
+                    'created_at' => date('Y-m-d'),
+                    'modified_at' => date('Y-m-d')
+                ));
+        
+                $type = "insert";
+            } else {
+                $values = array(
+                    'title' => $data['title'],
+                    'user_id' => $data['user_id'],
+                    'budget_min' => $data['budget_min'],
+                    'budget_max' => $data['budget_max'],
+                    'status' => $data['status'],
+                    'modified_at' => date('Y-m-d')
+        
+                );
+                 
+                $department = $sql->update('level')
+                ->set($values)
+                ->where(array(
+                    'id' => $data['level_id']
+                ));
+                $level_id = $data['level_id'];
+                $type = "update";
+            }
+        
+            $selectString = $sql->getSqlStringForSqlObject($department);
+            $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+           
+        
+            if ($result) {
+                return array(
+                    'success' => $result->getAffectedRows(),
+                    'id' => $level_id,
                     'type' => $type
                 );
             }

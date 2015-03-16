@@ -8,7 +8,7 @@
 		<ol class="breadcrumb">
 			<li><a href="<?php echo $this->basePath('user');?>">Dashboard</a></li>
 			<li class="active">Department</li>
-			<li><a href="/user/department/adddepartment" class="btn btn-success btn-xs">Add New Department</a></li>
+			<li><a href="<?php echo BASE_URL; ?>user/department/adddepartment" class="btn btn-success btn-xs">Add New Department</a></li>
 		</ol>
 	</div>
 </div>
@@ -55,8 +55,8 @@
  							$statusImage='<img data-tooltip="tooltip" src="'.$this->basePath ().'/images/status_red.png"  alt="Deactive" data-original-title="De-active , click here to Activate">';
 				
  						 }
- 						 $departmentListing .= '<td class="center"><a href="javascript:;" class="userstatus" 
-                                             data-user-id='.$department['id'].' data-user-type="users" data-user-status='.$department['status'].'>'.$statusImage.'</a></td>';
+ 						 $departmentListing .= '<td class="center"><a href="javascript:;" class="activeDeactive" 
+                                             data-id='.$department['id'].' data-type="department" data-status='.$department['status'].'>'.$statusImage.'</a></td>';
  						 $departmentListing .= '<td class="table-action">
 										  <a href="'.$this->basePath().'/user/department/adddepartment/'.$department['id'].'" alt="Edit" title="Edit"><i class="glyphicon glyphicon-edit"></i></a>
  										</td>';
@@ -73,5 +73,6 @@
           </div><!-- table-responsive -->
 </div>
 <?php 
+    $this->inlineScript ()->prependFile ( $this->basePath () . '/js/common/common.js' );
 	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/department.js' );
 ?>
