@@ -5,7 +5,7 @@ jQuery(document).ready(function(){
 		"aoColumnDefs": [
           { 'bSortable': false, 'aTargets': [ 3 ] }
        ]
-	});
+	}); 
 	
 	$.validator.addMethod('lessthan', function(value, element, param) {
           return this.optional(element) || parseFloat(value) < parseFloat($(param).val());
