@@ -53,6 +53,11 @@ class UserService implements UserServiceInterface {
     
         return $this->userMapper->addLevel($data);
     }
+    
+    public function addCostcenter($data) {
+    
+        return $this->userMapper->addCostcenter($data);
+    }
 }
 
 ?>

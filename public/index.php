@@ -9,7 +9,7 @@ defined('PUBLIC_PATH')
 || define('PUBLIC_PATH', null);
 
 defined('PROJECT_NAME')
-|| define('PROJECT_NAME', '');
+|| define('PROJECT_NAME', 'http://budgetandpurchase.local.com/');
 ini_set('display_errors', true);
 
 /**

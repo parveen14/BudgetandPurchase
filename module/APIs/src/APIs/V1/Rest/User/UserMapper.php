@@ -74,7 +74,10 @@ class UserMapper implements ServiceLocatorAwareInterface {
             $data->id = $resultset['id'];
             $data->username = $resultset['username'];
             $data->email_id = $resultset['email_id'];
-            return $data;
+   
+            unset($resultset['password']);
+            
+            return $resultset;
            } else {
                return new ApiProblem(422,  'Email or Password missing','Server side validation error','Email or Password missing');
            }

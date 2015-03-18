@@ -33,6 +33,7 @@ class UserResource extends AbstractResourceListener
      */
     public function delete($id)
     {
+        echo "This is delete method"; die;
         return new ApiProblem(405, 'The DELETE method has not been defined for individual resources');
     }
 
@@ -80,6 +81,7 @@ class UserResource extends AbstractResourceListener
      */
     public function patch($id, $data)
     {
+        echo "This is patch method"; die;
         return new ApiProblem(405, 'The PATCH method has not been defined for individual resources');
     }
 
@@ -91,6 +93,7 @@ class UserResource extends AbstractResourceListener
      */
     public function replaceList($data)
     {
+        echo "This is PUT method"; die;
         return new ApiProblem(405, 'The PUT method has not been defined for collections');
     }
 
@@ -103,6 +106,7 @@ class UserResource extends AbstractResourceListener
      */
     public function update($id, $data)
     {
+        echo "This is PUT method"; die;
         return new ApiProblem(405, 'The PUT method has not been defined for individual resources');
     }
 }

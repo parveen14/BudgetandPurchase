@@ -495,6 +495,63 @@ class UserMapper implements UserMapperInterface{
                 );
             }
         }
+        
+        public function addCostcenter($data)
+        {
+
+            $sql = new Sql($this->dbAdapter);
+             
+            if ((! $data['costcenter_id']) OR empty($data['costcenter_id'])) {
+                $department = $sql->insert('cost_center')->values(array(
+                    'user_id'=> $data['user_id'],
+                    'title' => $data['title'],
+                    'code' => $data['code'],
+                    'parent_id' => $data['parent_id'],
+                    'description'=>$data['description'],
+                    'budget'=>$data['budget'],
+                    'status' => $data['status'],
+                    'created_at' => date('Y-m-d'),
+                    'modified_at' => date('Y-m-d')
+                ));
+        
+                $type = "insert";
+            } else {
+                $values = array(
+                    'title' => $data['title'],
+                    'code' => $data['code'],
+                    'user_id' => $data['user_id'],
+                    'parent_id' => $data['parent_id'],
+                    'description'=>$data['description'],
+                    'budget'=>$data['budget'],
+                    'status' => $data['status'],
+                    'modified_at' => date('Y-m-d')
+        
+                );
+                 
+                $department = $sql->update('cost_center')
+                ->set($values)
+                ->where(array(
+                    'id' => $data['costcenter_id']
+                ));
+                $costcenter_id = $data['costcenter_id'];
+                $type = "update";
+            }
+        
+            $selectString = $sql->getSqlStringForSqlObject($department);
+            $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+            if ((! $data['costcenter_id']) OR empty($data['costcenter_id'])) {
+                $costcenter_id=$this->dbAdapter->getDriver()->getLastGeneratedValue();
+            }
+        
+            if ($result) {
+               
+                return array(
+                    'success' => $result->getAffectedRows(),
+                    'id' => $costcenter_id,
+                    'type' => $type
+                );
+            }
+        }
 }
 
 ?>

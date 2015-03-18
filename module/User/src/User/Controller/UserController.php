@@ -575,6 +575,73 @@ class UserController extends AbstractActionController
         return $view;
     }
     
+    public function costcenterAction() {
+    
+        $userSession = new Container('user');
+        $this->layout('layout/admin_layout');
+    
+        $data= $this->commonService->getDatasets('cost_center','',array('user_id'=>$userSession->data->id));
+    
+        $view = new ViewModel(array(
+            'costcenterList'      => $data,
+            'messages'  => $this->flashmessenger()->getMessages(),
+            'error_messages' => $this->flashmessenger()->getErrorMessages(),
+        ));
+        $view->setTemplate('user/user/costcenter/costcenter');
+        return $view;
+    }
+    
+    public function addcostcenterAction() {
+         
+        $userSession = new Container('user');
+        $costcenter_id = $this->getEvent()
+        ->getRouteMatch()
+        ->getParam('slug');
+        $data = array();
+        $parentWhere="user_id=".$userSession->data->id;
+        if ($costcenter_id) {
+            $data = array(
+                'costcenter_id' => $costcenter_id,
+                'costcente' => $this->commonService->getDatasets('cost_center', array(), array(
+                    'id' => $costcenter_id
+                ))[0]
+            );
+            $parentWhere .=" AND id!=".$costcenter_id;
+        }
+    
+        $data['parentcostcenter']= $this->commonService->getDatasets('cost_center','',$parentWhere);
+       
+         
+       
+        if($this->getRequest()->isPost()) {
+            $requestQuery = $this->params();
+    
+            $roleData = array(
+                'user_id'=> $userSession->data->id,
+                'code'=>$requestQuery->fromPost('code'),
+                'title' => $requestQuery->fromPost('title'),
+                'costcenter_id' => $requestQuery->fromPost('costcenter_id'),
+                'parent_id' => $requestQuery->fromPost('parent_id'),
+                'description' => $requestQuery->fromPost('description'),
+                'budget'=>$requestQuery->fromPost('budget'),
+                'status'=> $requestQuery->fromPost('status'), 
+            );
+            $return=$this->userService->addCostcenter($roleData);
+            if($return['success']) {
+                $this->flashmessenger()->addMessage('Cost Center '. ucfirst($return['type']) .' Successfully');
+            } else {
+                $this->flashmessenger()->addErrorMessage('Error while adding Cost Center');
+            }
+            return $this->redirect()->toRoute('costcenter');
+        }
+    
+    
+        $this->layout('layout/admin_layout');
+        $view = new ViewModel($data);
+        $view->setTemplate('user/user/costcenter/add');
+        return $view;
+    }
+    
     public function changestatusAction() {
         try {
             $request = $this->getRequest();
@@ -599,7 +666,7 @@ class UserController extends AbstractActionController
         }
 	    return new JsonModel($result);
     }
-    
+
     private function showerror($errorMessage=array()) {
         if(!isset($errorMessage['errormessage'])) {
             $errorMessage['errormessage']=Constants::SOMTHING_MIGHT_WENT_WRONG;

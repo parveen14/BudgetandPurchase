@@ -20,6 +20,8 @@ interface UserServiceInterface {
     public function addLocation($data);
     
     public function addLevel($data);
+    
+    public function addCostcenter($data);
 }
 
 ?>

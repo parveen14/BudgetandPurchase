@@ -1,0 +1,80 @@
+<?php $this->headTitle('Users');?>
+<div class="pageheader">
+	<h2>
+		<i class="fa fa-user"></i> Cost Center <span>Listing</span>
+	</h2>
+	<div class="breadcrumb-wrapper">
+		<span class="label">You are here:</span>
+		<ol class="breadcrumb">
+			<li><a href="<?php echo $this->basePath('user');?>">Dashboard</a></li>
+			<li class="active">Cost Center </li>
+			<li><a href="<?php echo BASE_URL; ?>user/costcenter/addcostcenter" class="btn btn-success btn-xs">Add New Cost Center</a></li>
+		</ol>
+	</div>
+</div>
+  <?php if($this->messages) {
+        
+       echo '<div class="panel-body"><div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        '.$this->messages[0].'
+        </div></div>';
+    }
+     if($this->error_messages) {
+        
+       echo '<div class="panel-body"><div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        '.$this->error_messages[0].'
+        </div></div>';
+    } ?>     
+<div class="contentpanel">
+	<!-- content goes here... -->
+    <div class="table-responsive">
+          <table class="table" id="tableUsers">
+              <thead>
+                 <tr>
+                    <th>S.No</th> 
+                    <th>Title</th>
+                    <th>Budget($)</th>
+                    <th>Status</th>
+                   <th class="table-action">Edit</th>
+                 </tr>
+              </thead>
+               
+              <tbody>
+               <?php  
+					$Serial=1;$Listing="";
+					if(is_array($this->costcenterList)) {
+ 					foreach($this->costcenterList as $costcenterList) {
+						
+ 						$Listing .= '<tr class="gradeU">';
+						$Listing .= '<td>'.$Serial++.'</td>';
+ 						 $Listing .= '<td class="center"> '.$costcenterList['title'].'</td>';
+ 						 $Listing .= '<td class="center"> '.$costcenterList['budget'].'</td>';
+
+ 						if($costcenterList['status']=='1') {
+ 							$statusImage='<img data-tooltip="tooltip" src="'.$this->basePath ().'/images/status_green.png"  alt="Deactive" data-original-title="Active , click here to deactivate">';
+ 						 } else {
+ 							$statusImage='<img data-tooltip="tooltip" src="'.$this->basePath ().'/images/status_red.png"  alt="Deactive" data-original-title="De-active , click here to Activate">';
+				
+ 						 }
+ 						 $Listing .= '<td class="center"><a href="javascript:;" class="activeDeactive" 
+                                             data-id='.$costcenterList['id'].' data-type="cost_center" data-status='.$costcenterList['status'].'>'.$statusImage.'</a></td>';
+ 						 $Listing .= '<td class="table-action">
+										  <a href="'.$this->basePath().'/user/costcenter/addcostcenter/'.$costcenterList['id'].'" alt="Edit" title="Edit"><i class="glyphicon glyphicon-edit"></i></a>
+ 										</td>';
+ 						 $Listing .= '</tr>';  
+ 					}
+					} else {
+					    $Listing= "<tr><td colspan=4>No Record to List</td></tr>";
+					    
+					}
+ 					echo $Listing;
+				?> 
+              </tbody>
+           </table>
+          </div><!-- table-responsive -->
+</div>
+<?php 
+$this->inlineScript ()->prependFile ( $this->basePath () . '/js/common/common.js' );
+$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/costcenter.js' );
+?>
