@@ -1,4 +1,13 @@
-<?php $this->headTitle(($this->department_id ? 'Edit Department' : 'Add Department'));?>
+<?php $this->headTitle(($this->department_id ? 'Edit Department' : 'Add Department'));
+
+	if(isset($this->department['business_department']) and !empty($this->department['business_department'])) {
+		$businessunit=$this->department['business_department'];
+		$businesunitarray = array_map(function ($businessunit) { return $businessunit['businessunit_id']; }, $businessunit);
+	} else {
+		$businesunitarray=array();
+	}
+
+?>
 <div class="pageheader">
 	<h2>
 		<i class="fa fa-file"></i> Department <span><?php echo ($this->department_id ? 'Edit' : 'Add'); ?></span>
@@ -41,7 +50,25 @@
                <textarea id="description" name="description" placeholder="Enter description here..." class="form-control" rows="10"><?php echo $this->department['description'];?></textarea>
               
               </div>
-            </div>     
+            </div>   
+		  <div class="form-group">
+              
+             <label class="col-sm-3 control-label">Business Unit</label>
+              <div class="col-sm-4">
+				   <select class="form-control mb15"  id="businessunit" name="businessunit[]" multiple="multiple">
+					
+						<?php
+							if(is_array($this->businessunit) ) {
+								foreach($this->businessunit as $businessunit) {
+									echo "<option value=".$businessunit['id'];
+									if(in_array($businessunit['id'],$businesunitarray)) { echo " selected='selected'"; }
+									echo ">".$businessunit['title']."</option>";
+								}
+							}
+						?>
+				   </select>
+              </div>
+            </div> 	
             <div class="form-group">
               <label class="col-sm-3 control-label">Status</label>
               <div class="col-sm-5">

@@ -1,17 +1,23 @@
 <?php $this->headTitle(($this->costcenter_id ? 'Edit Cost Center' : 'Add Cost Center'));
 
+	if(isset($this->costcentegroup['costcenter_group_costcenter']) and !empty($this->costcentegroup['costcenter_group_costcenter'])) {
+		$costcenter=$this->costcentegroup['costcenter_group_costcenter'];
+		$costcenterarray = array_map(function ($costcenter) { return $costcenter['costcenter_id']; }, $costcenter);
+	} else {
+		$costcenterarray=array();
+	}
 	
 ?>
 <div class="pageheader">
 	<h2>
-		<i class="fa fa-file"></i> Cost Center <span><?php echo ($this->costcenter_id ? 'Edit' : 'Add'); ?></span>
+		<i class="fa fa-file"></i> Cost Center Group <span><?php echo ($this->costcenter_group_id ? 'Edit' : 'Add'); ?></span>
 	</h2>
 	<div class="breadcrumb-wrapper">
 		<span class="label">You are here:</span>
 		<ol class="breadcrumb">
 			<li><a href="<?php echo $this->basePath('user');?>">User</a></li>
-			<li><a href="<?php echo $this->basePath('user/costcenter');?>">Cost Center</a></li>
-			<li class="active"><?php echo ($this->costcenter_id ? 'Edit' : 'Add'); ?></li>
+			<li><a href="<?php echo $this->basePath('user/ccgroup');?>">Cost Center Group</a></li>
+			<li class="active"><?php echo ($this->costcenter_group_id ? 'Edit' : 'Add'); ?></li>
 		</ol>
 	</div>
 </div>
@@ -25,38 +31,40 @@
             <a href="" class="panel-close">&times;</a>
             <a href="" class="minimize">&minus;</a>
           </div>
-          <h4 class="panel-title"><?php echo ($this->costcenter_id ? 'Edit' : 'Add'); ?> Cost Center</h4>
+          <h4 class="panel-title"><?php echo ($this->costcenter_group_id ? 'Edit' : 'Add'); ?> Cost Center Group </h4>
         </div>
-		 <form id="addCostcenterForm" name="addCostcenterForm" class="form-horizontal form-bordered" method="POST" enctype="multipart/form-data">
+		 <form id="addCostcentergroupForm" name="addCostcentergroupForm" class="form-horizontal form-bordered" method="POST" enctype="multipart/form-data">
         <div class="panel-body panel-body-nopadding">
-            <?php echo ($this->costcenter_id ? '<input type="hidden" value="'.$this->costcenter_id.'" name="costcenter_id" />' : '');?>
+            <?php echo ($this->costcenter_group_id ? '<input type="hidden" value="'.$this->costcenter_group_id.'" name="costcenter_group_id" />' : '');?>
             <div class="form-group">
               <label class="col-sm-3 control-label">Title</label>
               <div class="col-sm-6">
-                <input type="text" placeholder="Enter Title" class="form-control" name="title" id="title" value="<?php echo $this->costcente['title'];?>"/>
+                <input type="text" placeholder="Enter Title" class="form-control" name="title" id="title" value="<?php echo $this->costcentegroup['title'];?>"/>
               </div>
             </div>
 			<div class="form-group">
-              <label class="col-sm-3 control-label">Code</label>
-              <div class="col-sm-6">
-                <input type="text" placeholder="Enter Code" class="form-control" name="code" id="code" value="<?php echo $this->costcente['code'];?>"/>
-              </div>
-            </div>
-            <div class="form-group">
               
-             <label class="col-sm-3 control-label">Budget ($)</label>
-              <div class="col-sm-3">
-                <input type="text" placeholder="Enter Budget" class="form-control" name="budget" id="budget" value="<?php echo $this->costcente['budget'];?>"/>
+             <label class="col-sm-3 control-label">Cost Center</label>
+              <div class="col-sm-4">
+				   <select class="form-control mb15"  id="costcenter" name="costcenter[]" multiple="multiple">
+					
+						<?php
+							if(is_array($this->costcenter) ) {
+								foreach($this->costcenter as $costcenter) {
+									echo "<option value=".$costcenter['id'];
+									if(in_array($costcenter['id'],$costcenterarray)) { echo " selected='selected'"; }
+									echo ">".$costcenter['title']."</option>";
+								}
+							}
+						?>
+				   </select>
               </div>
-              
-            </div>  
+            </div> 	
 			<div class="form-group">
-              
              <label class="col-sm-3 control-label">Description</label>
               <div class="col-sm-6">
-                <textarea placeholder="Enter Description" class="form-control" name="description" id="description"><?php echo $this->costcente['description'];?></textarea>
+                <textarea placeholder="Enter Description" class="form-control" name="description" id="description"><?php echo $this->costcentegroup['description'];?></textarea>
               </div>
-            
             </div>
 						
             <div class="form-group">
@@ -83,5 +91,5 @@
       </div>
 </div><!-- contentpanel -->
 <?php 
-   $this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/ccgroup.js' );
+   $this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/costcenter.js' );
 ?>

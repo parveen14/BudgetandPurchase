@@ -77,17 +77,25 @@ prependFile($this->basePath() . '/js/html5shiv.js', 'text/javascript', array(
         <li <?php echo  ($this->url() == '/user' || $this->url() == '/user/dashboard')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user');?>"><i class="fa fa-home"></i> <span>Dashboard</span></a>
 		</li>
-        <li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/department')  ? 'class=active' : '';?>>
-			<a href="<?php echo $this->basepath('/user/department');?>"><i class="fa fa-building-o"></i> <span>Departments</span></a>
-		</li>
-		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/location')  ? 'class=active' : '';?>>
-			<a href="<?php echo $this->basepath('/user/location');?>"><i class="fa fa-location-arrow"></i> <span>Locations</span></a>
-		</li>
 		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/businessunit')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user/businessunit');?>"><i class="fa fa-briefcase"></i> <span>Business Units</span></a>
 		</li>
+        <li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/department')  ? 'class=active' : '';?>>
+			<a href="<?php echo $this->basepath('/user/department');?>"><i class="fa fa-building-o"></i> <span>Departments</span></a>
+		</li>
+	<!--	<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/location')  ? 'class=active' : '';?>>
+			<a href="<?php echo $this->basepath('/user/location');?>"><i class="fa fa-location-arrow"></i> <span>Locations</span></a>
+		</li>
+	-->	
 		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/project')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user/project');?>"><i class="fa fa-envelope"></i> <span>Projects</span></a>
+		</li>
+		
+		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/costcenter')  ? 'class=active' : '';?>>
+			<a href="<?php echo $this->basepath('/user/costcenter');?>"><i class="fa fa-envelope"></i> <span>Cost Center</span></a>
+		</li>
+		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/ccgroup')  ? 'class=active' : '';?>>
+			<a href="<?php echo $this->basepath('/user/ccgroup');?>"><i class="fa fa-envelope"></i> <span>Cost Center Groups</span></a>
 		</li>
 		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/level')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user/level');?>"><i class="fa fa-sitemap"></i> <span>Levels</span></a>

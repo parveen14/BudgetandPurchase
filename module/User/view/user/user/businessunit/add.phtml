@@ -64,21 +64,21 @@
               
               </div>
             </div>  
-			<div class="form-group">
+			<!-- <div class="form-group">
               
              <label class="col-sm-3 control-label">Departments</label>
               <div class="col-sm-4">
 				   <select class="form-control mb15"  id="department" name="department[]" multiple="multiple">
 						<?php
-							foreach($this->department as $departments) {
-								echo "<option value=".$departments['id'];
-								if(in_array($departments['id'],$businesunitarray)) { echo " selected='selected'"; }
-								echo ">".$departments['title']."</option>";
-							}
+		//					foreach($this->department as $departments) {
+		//						echo "<option value=".$departments['id'];
+		//						if(in_array($departments['id'],$businesunitarray)) { echo " selected='selected'"; }
+		//						echo ">".$departments['title']."</option>";
+		//					}
 						?>
 				   </select>
               </div>
-            </div>  
+            </div>  -->
 <!-- 			<div class="form-group"> -->
 <!--              <label class="col-sm-3 control-label">Projects</label> -->
 <!--               <div class="col-sm-4"> -->
@@ -93,20 +93,20 @@
 <!-- 				   </select> -->
 <!--               </div> -->
 <!--             </div>  -->
-			<div class="form-group">
+	<!--		<div class="form-group">
              <label class="col-sm-3 control-label">Locations</label>
               <div class="col-sm-4">
 				   <select class="form-control mb15"  id="location" name="location[]" multiple="multiple">
 						<?php
-							foreach($this->location as $location) {
-								echo "<option value=".$location['id'];
-								if(in_array($location['id'],$locationarray)) { echo " selected='selected'"; }
-								echo ">".$location['title']."</option>";
-							}
+	//						foreach($this->location as $location) {
+	//							echo "<option value=".$location['id'];
+	//							if(in_array($location['id'],$locationarray)) { echo " selected='selected'"; }
+	//							echo ">".$location['title']."</option>";
+	//						}
 						?>
 				   </select>
               </div>
-            </div> 
+            </div>  -->
             <div class="form-group">
               <label class="col-sm-3 control-label">Status</label>
               <div class="col-sm-5">

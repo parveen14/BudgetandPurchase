@@ -58,6 +58,10 @@ class UserService implements UserServiceInterface {
     
         return $this->userMapper->addCostcenter($data);
     }
+    
+    public function addCostcentergroup($data) {
+        return $this->userMapper->addCostcentergroup($data);
+    }
 }
 
 ?>

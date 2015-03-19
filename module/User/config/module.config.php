@@ -249,6 +249,32 @@ return array(
                     )
                 )
             ),
+            'costcentergroup' => array (
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array (
+                    'route' => '/user/ccgroup',
+                    'defaults' => array (
+                        '__NAMESPACE__' => 'User\Controller',
+                        'controller' => 'User',
+                        'action' => 'costcentergroup'
+                    )
+                ),
+                'may_terminate' => true,
+                'child_routes' => array (
+                    'process' => array (
+                        'type' => 'Segment',
+                        'options' => array (
+                            'route' => '/[:action][/:slug]',
+                            'constraints' => array (
+                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'slug' => '[a-zA-Z0-9_-]*'
+                            ),
+                            'defaults' => array ()
+                        )
+                    )
+                )
+            ),
         ),
     ),
 	  'service_manager' => array(

@@ -64,7 +64,6 @@ class UserMapper implements UserMapperInterface{
                     'modified_at' => date('Y-m-d')
                 ));
                 
-                //$department_id = $this->dbAdapter->getDriver()->getLastGeneratedValue();
                 $type = "insert";
             } else {
                 $values = array(
@@ -87,8 +86,30 @@ class UserMapper implements UserMapperInterface{
         
             $selectString = $sql->getSqlStringForSqlObject($department);
             $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
-       
-            if ($result) {  
+            
+             if ((! $data['department_id']) OR empty($data['department_id'])) {
+                $department_id=$this->dbAdapter->getDriver()->getLastGeneratedValue();
+            }
+            
+            if ($result) {
+
+                if(isset($data['businessunit']) AND is_array($data['businessunit'])) {
+                    $delete = $sql->delete ( 'business_department' )->where ( array (
+                        'department_id' => $department_id
+                    ) );
+                    $selectString = $sql->getSqlStringForSqlObject($delete);
+                    $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+                    
+                    foreach($data['businessunit'] as $businessunit) {
+                        $business_department=$sql->insert('business_department')->values(array(
+                            'businessunit_id' => $businessunit,
+                            'department_id'=> $department_id
+                        ));
+                        $selectString = $sql->getSqlStringForSqlObject($business_department);
+                        $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+                    }
+                    
+                }
                 return array(
                     'success' => $result->getAffectedRows(),
                     'id' => $department_id,
@@ -506,7 +527,6 @@ class UserMapper implements UserMapperInterface{
                     'user_id'=> $data['user_id'],
                     'title' => $data['title'],
                     'code' => $data['code'],
-                    'parent_id' => $data['parent_id'],
                     'description'=>$data['description'],
                     'budget'=>$data['budget'],
                     'status' => $data['status'],
@@ -520,7 +540,6 @@ class UserMapper implements UserMapperInterface{
                     'title' => $data['title'],
                     'code' => $data['code'],
                     'user_id' => $data['user_id'],
-                    'parent_id' => $data['parent_id'],
                     'description'=>$data['description'],
                     'budget'=>$data['budget'],
                     'status' => $data['status'],
@@ -548,6 +567,74 @@ class UserMapper implements UserMapperInterface{
                 return array(
                     'success' => $result->getAffectedRows(),
                     'id' => $costcenter_id,
+                    'type' => $type
+                );
+            }
+        }
+        
+        public function addCostcentergroup($data)
+        {
+        
+            $sql = new Sql($this->dbAdapter);
+             
+            if ((! $data['costcenter_group_id']) OR empty($data['costcenter_group_id'])) {
+                $department = $sql->insert('costcenter_group')->values(array(
+                    'user_id'=> $data['user_id'],
+                    'title' => $data['title'],
+                    'description'=>$data['description'],
+                    'status' => $data['status'],
+                    'created_at' => date('Y-m-d'),
+                    'modified_at' => date('Y-m-d')
+                ));
+        
+                $type = "insert";
+            } else {
+                $values = array(
+                    'title' => $data['title'],
+                    'user_id' => $data['user_id'],
+                    'description'=>$data['description'],
+                    'status' => $data['status'],
+                    'modified_at' => date('Y-m-d')
+                );
+                 
+                $department = $sql->update('costcenter_group')
+                ->set($values)
+                ->where(array(
+                    'id' => $data['costcenter_group_id']
+                ));
+                $costcenter_group_id = $data['costcenter_group_id'];
+                $type = "update";
+            }
+        
+            $selectString = $sql->getSqlStringForSqlObject($department);
+            $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+            if ((! $data['costcenter_group_id']) OR empty($data['costcenter_group_id'])) {
+                $costcenter_group_id=$this->dbAdapter->getDriver()->getLastGeneratedValue();
+            }
+        
+            if ($result) {
+                 
+                if(isset($data['costcenter']) AND is_array($data['costcenter'])) {
+                    
+                    $delete = $sql->delete ( 'costcenter_group_costcenter' )->where ( array (
+                    'group_id' => $costcenter_group_id
+                ) );
+                 $selectString = $sql->getSqlStringForSqlObject($delete);
+                 $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+                
+                    foreach($data['costcenter'] as $costcenter) {
+                    
+                        $group_role=$sql->insert('costcenter_group_costcenter')->values(array(
+                            'group_id' => $costcenter_group_id,
+                            'costcenter_id'=> $costcenter
+                        ));
+                        $selectString = $sql->getSqlStringForSqlObject($group_role);
+                        $result = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+                    }
+                }
+                return array(
+                    'success' => $result->getAffectedRows(),
+                    'id' => $costcenter_group_id,
                     'type' => $type
                 );
             }

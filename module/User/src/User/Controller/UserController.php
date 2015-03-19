@@ -83,11 +83,18 @@ class UserController extends AbstractActionController
         ->getRouteMatch()
         ->getParam('slug');
         $data = array();
+        
+        $tables=array();
+        $tables['table1']='department';
+        $tables['table1key']='id';
+        $tables['table2']='business_department';
+        $tables['table2key']='department_id';
+        $tables['table2requiredColumns']=array('businessunit_id');
      
         if ($department_id) {
             $data = array(
                 'department_id' => $department_id,
-                'department' => $this->commonService->getDatasets('department', array(), array(
+                'department' => $this->commonService->getDatasetsmanyjoin($tables, array(), array(
                     'id' => $department_id
                 ))[0]
             );
@@ -100,6 +107,7 @@ class UserController extends AbstractActionController
                 'title' => $requestQuery->fromPost('title'),
                 'description' => $requestQuery->fromPost('description'),
                 'department_id' => $requestQuery->fromPost('department_id'),
+                'businessunit'=> $requestQuery->fromPost('businessunit'),
                 'status' => $requestQuery->fromPost('pStatus'),
                 'user_id'=> $userSession->data->id,
             );
@@ -113,7 +121,9 @@ class UserController extends AbstractActionController
             return $this->redirect()->toRoute('department');
         }
         
+        $data['businessunit']=$this->commonService->getDatasets('businessunit','',array('user_id'=>$userSession->data->id));
         
+     
         $this->layout('layout/admin_layout');
         $view = new ViewModel($data);
         $view->setTemplate('user/user/department/add');
@@ -293,19 +303,19 @@ class UserController extends AbstractActionController
     
         }
         
-        $data['department']=$this->commonService->getDatasets('department','',array('user_id'=>$userSession->data->id,'status'=>'1'));
+      //  $data['department']=$this->commonService->getDatasets('department','',array('user_id'=>$userSession->data->id,'status'=>'1'));
       //  $data['project']=$this->commonService->getDatasets('project','',array('user_id'=>$userSession->data->id,'status'=>'1'));
-        $data['location']=$this->commonService->getDatasets('location','',array('user_id'=>$userSession->data->id,'status'=>'1'));
+      //  $data['location']=$this->commonService->getDatasets('location','',array('user_id'=>$userSession->data->id,'status'=>'1'));
          
-        if(empty($data['department'])) {
-               $error=array();
-               $error['errormessage']='Please add/activate Departments & Projects before adding / editing Business Unit';
-               $error['okbutton']='Add Department';
-               $error['okbuttonlink']=$this->getRequest()->getBaseUrl().'/user/department/adddepartment';
-               $error['cancelbutton']='Add Project';
-               $error['cancelbuttonlink']=$this->getRequest()->getBaseUrl().'/user/project/addproject';
-            return $this->showerror($error);
-        }
+//         if(empty($data['department'])) {
+//                $error=array();
+//                $error['errormessage']='Please add/activate Departments & Projects before adding / editing Business Unit';
+//                $error['okbutton']='Add Department';
+//                $error['okbuttonlink']=$this->getRequest()->getBaseUrl().'/user/department/adddepartment';
+//                $error['cancelbutton']='Add Project';
+//                $error['cancelbuttonlink']=$this->getRequest()->getBaseUrl().'/user/project/addproject';
+//             return $this->showerror($error);
+//         }
         if($this->getRequest()->isPost()) {
             $requestQuery = $this->params();
             $departmentData = array(
@@ -313,16 +323,16 @@ class UserController extends AbstractActionController
                 'description' => $requestQuery->fromPost('description'),
                 'businessunit_id' => $requestQuery->fromPost('businessunit_id'),
                 'status' => $requestQuery->fromPost('pStatus'),
-                'department'=>$requestQuery->fromPost('department'),
+              //  'department'=>$requestQuery->fromPost('department'),
               //  'project'=>$requestQuery->fromPost('project'),
                 'location'=>$requestQuery->fromPost('location'),
                 'user_id'=> $userSession->data->id,
             );
             $return=$this->userService->addBusinessunit($departmentData);
             if($return['success']) {
-                $this->flashmessenger()->addMessage('Department '. ucfirst($return['type']) .' Successfully');
+                $this->flashmessenger()->addMessage('Business Unit '. ucfirst($return['type']) .' Successfully');
             } else {
-                $this->flashmessenger()->addErrorMessage('Error while adding department');
+                $this->flashmessenger()->addErrorMessage('Error while adding business unit');
             }
             return $this->redirect()->toRoute('businessunit');
         }
@@ -608,8 +618,7 @@ class UserController extends AbstractActionController
             );
             $parentWhere .=" AND id!=".$costcenter_id;
         }
-    
-        $data['parentcostcenter']= $this->commonService->getDatasets('cost_center','',$parentWhere);
+ 
        
          
        
@@ -621,7 +630,6 @@ class UserController extends AbstractActionController
                 'code'=>$requestQuery->fromPost('code'),
                 'title' => $requestQuery->fromPost('title'),
                 'costcenter_id' => $requestQuery->fromPost('costcenter_id'),
-                'parent_id' => $requestQuery->fromPost('parent_id'),
                 'description' => $requestQuery->fromPost('description'),
                 'budget'=>$requestQuery->fromPost('budget'),
                 'status'=> $requestQuery->fromPost('status'), 
@@ -639,6 +647,76 @@ class UserController extends AbstractActionController
         $this->layout('layout/admin_layout');
         $view = new ViewModel($data);
         $view->setTemplate('user/user/costcenter/add');
+        return $view;
+    }
+    
+    public function costcentergroupAction() {
+    
+        $userSession = new Container('user');
+        $this->layout('layout/admin_layout');
+    
+        $data= $this->commonService->getDatasets('costcenter_group','',array('user_id'=>$userSession->data->id));
+    
+        $view = new ViewModel(array(
+            'ccgroupList'      => $data,
+            'messages'  => $this->flashmessenger()->getMessages(),
+            'error_messages' => $this->flashmessenger()->getErrorMessages(),
+        ));
+        $view->setTemplate('user/user/costcenter/group');
+        return $view;
+    }
+    
+    public function addccgroupAction() {
+         
+        $userSession = new Container('user');
+        $costcenter_group_id = $this->getEvent()
+        ->getRouteMatch()
+        ->getParam('slug');
+        $data = array();
+        $tables=array();
+        $tables['table1']='costcenter_group';
+        $tables['table1key']='id';
+        $tables['table2']='costcenter_group_costcenter';
+        $tables['table2key']='group_id';
+        $tables['table2requiredColumns']=array('costcenter_id');
+        
+        if ($costcenter_group_id) {
+            $data = array(
+                'costcenter_group_id' => $costcenter_group_id,
+                'costcentegroup' => $this->commonService->getDatasetsmanyjoin($tables, array(), array(
+                    'id' => $costcenter_group_id
+                ))[0]
+            );
+        }
+    
+         
+         
+       
+        if($this->getRequest()->isPost()) {
+            $requestQuery = $this->params();
+    
+            $roleData = array(
+                'user_id'=> $userSession->data->id,
+                'title' => $requestQuery->fromPost('title'),
+                'costcenter_group_id' => $requestQuery->fromPost('costcenter_group_id'),
+                'costcenter' => $requestQuery->fromPost('costcenter'),
+                'description' => $requestQuery->fromPost('description'),
+                'status'=> $requestQuery->fromPost('status'),
+            );
+            $return=$this->userService->addCostcentergroup($roleData);
+            if($return['success']) {
+                $this->flashmessenger()->addMessage('Cost Center Group '. ucfirst($return['type']) .' Successfully');
+            } else {
+                $this->flashmessenger()->addErrorMessage('Error while adding Cost Center Group');
+            }
+            return $this->redirect()->toRoute('costcentergroup');
+        }
+    
+        $data['costcenter']=$this->commonService->getDatasets('cost_center', array(), array('user_id' =>$userSession->data->id));
+        
+        $this->layout('layout/admin_layout');
+        $view = new ViewModel($data);
+        $view->setTemplate('user/user/costcenter/addgroup');
         return $view;
     }
     

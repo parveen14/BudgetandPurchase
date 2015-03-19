@@ -22,6 +22,8 @@ interface UserMapperInterface
     public function addLevel($data);
     
     public function addCostcenter($data);
+    
+    public function addCostcentergroup($data);
 }
 
 ?>
