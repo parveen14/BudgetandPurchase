@@ -1,4 +1,4 @@
-ZendSkeletonApplication
+This is testing ZendSkeletonApplication
 =======================
 
 Introduction
