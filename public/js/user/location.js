@@ -11,7 +11,9 @@ jQuery(document).ready(function(){
         rules: {
             title: {
                 required: true,
-                maxlength: 50
+                minlength: 3,
+                maxlength: 32,
+				alphanumeric: true
             },
 			pStatus: {
                 required: true,
@@ -19,7 +21,9 @@ jQuery(document).ready(function(){
         },
         messages: {
         	title: {
-                required: "Please enter title."
+                required: "Please enter title.",
+				minlength: "Minimum 3 and Maximum 32 characters required.",
+                maxlength: "Minimum 3 and Maximum 32 characters required.",
             },
 			pStatus: {
                 required: "Please select status."

@@ -55,16 +55,16 @@ class Forgotpassword implements ServiceLocatorAwareInterface
         
         	$escaper = new Escaper();
         	$randomToken = md5(uniqid(mt_rand() * 1000000, true));
-    		$emailData['username'] = $params ['username'];
+    		$emailData['username'] = $params ['vc_fname'];
     		 $emailData['resetLink'] = BASE_URL.'authenticate/resetpassword/'.urlencode($randomToken);
     		$htmlMarkup = $this->getServiceLocator()->get('viewrenderer')->partial('partial/mails/forgot_password', $emailData);
     		
-    	   $this->getCommonModuleService()->sendEmail($htmlMarkup, $params ['email_id'], $params ['firstname'],'Reset your password');
+    	   $this->getCommonModuleService()->sendEmail($htmlMarkup, $params ['vc_email'], $params ['vc_fname'],'Reset your password');
     	   $this->adapter = $adapter;
     	   $sql = new Sql($this->adapter);
         	$update = $sql->update ( 'users' )->set ( array (
-        	    'password_token' => $randomToken,
-        	) )->where ( array ( 'id' => $params['id']	) );
+        	    'vc_password_token' => $randomToken,
+        	) )->where ( array ( 'i_user_id' => $params['i_user_id']	) );
         	
     
         	$selectString = $sql->getSqlStringForSqlObject($update);
@@ -78,7 +78,7 @@ class Forgotpassword implements ServiceLocatorAwareInterface
         $sql = new Sql($this->adapter);
         $select = $sql->select();
         $select->from('users');
-        $select->where(array('email_id' => $email_id));
+        $select->where(array('vc_email' => $email_id));
         $statement = $sql->prepareStatementForSqlObject($select);
         $results = $statement->execute();
         $data = $results->getResource()->fetch(\PDO::FETCH_ASSOC);
@@ -89,7 +89,7 @@ class Forgotpassword implements ServiceLocatorAwareInterface
         
         $this->adapter = $adapter;
         $sql = new Sql($this->adapter);      
-        $select = $sql->select()->from('users')->where (array('password_token'=> $password_token ));
+        $select = $sql->select()->from('users')->where (array('vc_password_token'=> $password_token ));
         
         $statement = $sql->prepareStatementForSqlObject($select);
         $results = $statement->execute();
@@ -105,9 +105,9 @@ class Forgotpassword implements ServiceLocatorAwareInterface
         $sql = new Sql($this->adapter);
         
         $update = $sql->update ( 'users' )->set ( array (
-            'password_token' => '',
-            'password'=>md5($params['password'])
-        ) )->where ( array ( 'password_token' => $params['password_token'],	) );
+            'vc_password_token' => '',
+            'vc_password'=>md5($params['vc_password'])
+        ) )->where ( array ( 'vc_password_token' => $params['vc_password_token'],	) );
     
                 
         $selectString = $sql->getSqlStringForSqlObject($update);

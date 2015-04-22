@@ -1,17 +1,17 @@
-<?php $this->headTitle(($this->level_id ? 'Edit Level' : 'Add Level'));
+<?php $this->headTitle(($this->i_level_id ? 'Edit Level' : 'Add Level'));
 
 	
 ?>
 <div class="pageheader">
 	<h2>
-		<i class="fa fa-file"></i> Level <span><?php echo ($this->level_id ? 'Edit' : 'Add'); ?></span>
+		<i class="fa fa-file"></i> Level <span><?php echo ($this->i_level_id ? 'Edit' : 'Add'); ?></span>
 	</h2>
 	<div class="breadcrumb-wrapper">
 		<span class="label">You are here:</span>
 		<ol class="breadcrumb">
-			<li><a href="<?php echo $this->basePath('user');?>">User</a></li>
+			<li><a href="<?php echo $this->basePath('dashboard');?>">Dashboard</a></li>
 			<li><a href="<?php echo $this->basePath('user/level');?>">Level</a></li>
-			<li class="active"><?php echo ($this->level_id ? 'Edit' : 'Add'); ?></li>
+			<li class="active"><?php echo ($this->i_level_id ? 'Edit' : 'Add'); ?> Level</li>
 		</ol>
 	</div>
 </div>
@@ -22,28 +22,28 @@
 
 	<div class="panel-heading">
           <div class="panel-btns">
-            <a href="" class="panel-close">&times;</a>
+            <!-- a href="" class="panel-close">&times;</a -->
             <a href="" class="minimize">&minus;</a>
           </div>
-          <h4 class="panel-title"><?php echo ($this->level_id ? 'Edit' : 'Add'); ?> Level</h4>
+          <h4 class="panel-title"><?php echo ($this->i_level_id ? 'Edit' : 'Add'); ?> Level</h4>
         </div>
 		 <form id="addLevelForm" name="addLevelForm" class="form-horizontal form-bordered" method="POST" enctype="multipart/form-data">
         <div class="panel-body panel-body-nopadding">
-            <?php echo ($this->level_id ? '<input type="hidden" value="'.$this->level_id.'" name="level_id" />' : '');?>
+            <?php echo ($this->i_level_id ? '<input type="hidden" value="'.$this->i_level_id.'" name="i_level_id" />' : '');?>
             <div class="form-group">
-              <label class="col-sm-3 control-label">Title</label>
+              <label class="col-sm-3 control-label">Name<span class="asterisk">*</span></label>
               <div class="col-sm-6">
-                <input type="text" placeholder="Enter Title" class="form-control" name="title" id="title" value="<?php echo $this->level['title'];?>"/>
+                <input type="text" placeholder="Enter Name" class="form-control" name="vc_name" id="vc_name" value="<?php echo $this->level['vc_name'];?>"/>
               </div>
             </div>
             <div class="form-group">
               
-             <label class="col-sm-3 control-label">Budget ($)</label>
+             <label class="col-sm-3 control-label">Budget<span class="asterisk">*</span> ($)</label>
               <div class="col-sm-3">
-                <input type="text" placeholder="Enter Minimum Budget" class="form-control" name="budget_min" id="budget_min" value="<?php echo $this->level['budget_min'];?>"/>
+                <input type="text" placeholder="Enter Minimum Budget" class="form-control" name="i_start_limit" id="i_start_limit" value="<?php echo $this->level['i_start_limit'];?>"/>
               </div>
               <div class="col-sm-3">
-                <input type="text" placeholder="Enter Maximum Budget" class="form-control" name="budget_max" id="budget_max" value="<?php echo $this->level['budget_max'];?>"/>
+                <input type="text" placeholder="Enter Maximum Budget" class="form-control" name="i_end_limit" id="i_end_limit" value="<?php echo $this->level['i_end_limit'];?>"/>
               </div>
             </div>  
 			
@@ -51,9 +51,9 @@
               <label class="col-sm-3 control-label">Status</label>
               <div class="col-sm-5">
                
-                <select  class="form-control mb15" id="pStatus" name="pStatus">
+                <select  class="form-control mb15" id="i_status" name="i_status">
                   <option value="1">Active</option>
-                  <option value="0" <?php echo (!$this->level['status'] ? 'selected="selected"' : '');?>>Inactive</option>
+                  <option value="0" <?php echo (!$this->level['i_status'] ? 'selected="selected"' : '');?>>Inactive</option>
                 </select>
               
               </div>
@@ -62,7 +62,7 @@
         <div class="panel-footer">
 			 <div class="row">
 				<div class="col-sm-6 col-sm-offset-3">
-				  <input type="submit" data-after-loading-text="<?php echo ($this->level_id ? 'Update' : 'Add'); ?>" data-loading-text="Please Wait..." id="addPageBtn" name="addPageBtn" value="<?php echo ($this->level_id ? 'Update' : 'Add');?>" class="btn btn-primary">&nbsp;
+				  <input type="submit" data-after-loading-text="<?php echo ($this->i_level_id ? 'Update' : 'Add'); ?>" data-loading-text="Please Wait..." id="addPageBtn" name="addPageBtn" value="<?php echo ($this->i_level_id ? 'Update' : 'Add');?>" class="btn btn-primary">&nbsp;
 				  <a href="<?php echo $this->basepath('user/level');?>" class="btn btn-default">Cancel</a>
 				</div>
 			 </div>

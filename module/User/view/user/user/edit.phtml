@@ -1,0 +1,129 @@
+<?php $this->headTitle('Users');?>
+<div class="pageheader">
+	<h2>
+		<i class="fa fa-user"></i> Profile 
+	</h2>
+	<div class="breadcrumb-wrapper">
+		<span class="label">You are here:</span>
+		<ol class="breadcrumb">
+			<li><a href="<?php echo $this->basePath('dashboard');?>">Dashboard</a></li>
+			<li class="active">Profile Edit</li>
+			
+		</ol>
+	</div>
+</div>
+    
+  <?php if($this->messages) {
+        
+       echo '<div class="panel-body"><div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        '.$this->messages[0].'
+        </div></div>';
+    }
+     if($this->error_messages) {
+        
+       echo '<div class="panel-body"><div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        '.$this->error_messages[0].'
+        </div></div>';
+    } 
+    
+    
+    ?>     
+<div class="contentpanel">
+	<div class="panel panel-default">
+        <div class="panel-heading">
+          <div class="panel-btns">
+            <!-- a href="" class="panel-close">&times;</a -->
+            <a href="" class="minimize">−</a>
+          </div>
+          <h4 class="panel-title">Edit Your Profile</h4>
+        </div>
+        <form action="" method="post" class="form-horizontal form-bordered" enctype="multipart/form-data">
+        <div class="panel-body panel-body-nopadding">
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Name<span class="asterisk">*</span></label>
+              <div class="col-sm-3">
+                <input type="text" placeholder="First Name" name="vc_fname" value="<?php echo $this->details['vc_fname']; ?>" class="form-control">
+              </div>
+              <div class="col-sm-3">
+                <input type="text" placeholder="Last Name" name="vc_lname" value="<?php echo $this->details['vc_lname']; ?>" class="form-control">
+              </div>
+            </div>
+            
+            <div class="form-group">
+				  <label class="col-sm-3 control-label" for="disabledinput">Email<span class="asterisk">*</span></label>
+				  <div class="col-sm-6">
+					 <input type="text" placeholder="Email" id="disabledinput" class="form-control" value="<?php echo $this->details['vc_email']; ?>" disabled="">
+				  </div>
+				</div>
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Phone Number</label>
+              <div class="col-sm-6">
+                <input type="text" name="vc_phone" placeholder="Enter your phone number" class="form-control" value="<?php echo $this->details['vc_phone']; ?>" >
+                </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Profile Pic</label>
+              <div class="col-sm-6">
+                <input type="file" name="vc_image" placeholder="Enter your phone number" class="form-control">
+                <input type="hidden" name="vc_old_image" value="<?php echo $this->details['vc_image']; ?>" >
+                </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Address</label>
+              <div class="col-sm-3">
+                <select name="i_ref_country_id"class="form-control" id="i_ref_country_id">
+					<?php foreach($countries as $countries) { ?>
+						<option value="<?php echo $countries['country_id']; ?>"
+						<?php if($this->details['i_ref_country_id']==$countries['country_id']) {
+								echo "selected='selected'";
+							} ?>
+						><?php echo $countries['name']; ?></option>
+					<?php } ?>
+				</select>
+				<span>Select Country</span>
+                </div>
+                <div class="col-sm-3">
+               <select name="i_ref_state_id"class="form-control" id="i_ref_state_id">
+					<?php if(is_array($states)) {foreach($states as $states) { ?>
+						<option value="<?php echo $states['states_id']; ?>"
+						<?php if($this->details['i_ref_state_id']==$states['states_id']) {
+								echo "selected='selected'";
+							} ?>
+						><?php echo $states['name']; ?></option>
+					<?php }}?>
+				</select>
+				<span>Select State</span>
+                </div>
+                <div class="col-sm-3">
+				 <input type="text" name="vc_city" placeholder="Enter your city" class="form-control" value="<?php echo $this->details['vc_city']; ?>">
+				<span>Add city</span>
+                </div>
+            </div>
+				<div class="form-group">
+				  <label class="col-sm-3 control-label">Zip Code</label>
+				  <div class="col-sm-6">
+					<input type="text" name="vc_zip_code" placeholder="Enter your zip code" class="form-control" value="<?php echo $this->details['vc_zip_code']; ?>" >
+					</div>
+				</div>
+        </div><!-- panel-body -->
+        
+        <div class="panel-footer">
+			 <div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+				  <input type="submit" name="submit" value="Submit" class="btn btn-primary">&nbsp;
+				  <a href="<?php echo BASE_URL; ?>user/profile" class="btn btn-default">Cancel</a>
+				</div>
+			 </div>
+		  </div><!-- panel-footer -->
+         </form>
+      </div>
+</div>
+<?php 
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/profile.js' );
+
+?>

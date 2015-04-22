@@ -3,25 +3,29 @@ jQuery(document).ready(function(){
 	$('#tableUsers').dataTable({
 		"sPaginationType" : "full_numbers",
 		"aoColumnDefs": [
-          { 'bSortable': false, 'aTargets': [ 2,3 ] }
+          { 'bSortable': false, 'aTargets': [ 2,3,4 ] }
        ]
 	});
 	
 	$("#addProjectForm").validate({
         rules: {
-            title: {
+            vc_name: {
                 required: true,
-                maxlength: 50
+                minlength: 3,
+                maxlength: 32,
+				alphanumeric: true
             },
-			pStatus: {
+			i_status: {
                 required: true,
             },
         },
         messages: {
-        	title: {
-                required: "Please enter title."
+        	vc_name: {
+                required: "Please enter name.",
+				minlength: "Minimum 3 and Maximum 32 characters required.",
+                maxlength: "Minimum 3 and Maximum 32 characters required.",
             },
-			pStatus: {
+			i_status: {
                 required: "Please select status."
             }
         }

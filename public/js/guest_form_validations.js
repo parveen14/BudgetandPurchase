@@ -165,4 +165,45 @@ $(function() {
             }
         }
     });
+    
+    $("#useractivationForm").validate({
+        rules: {
+			vc_email: {
+                required: true,
+                email:true,
+            },
+            vc_fname: {
+                required: true,
+                maxlength: 50
+            },
+            vc_lname: {
+                required: true,
+                maxlength: 50
+            },
+            vc_password: {
+                required: true
+            },
+            activate_token: {
+                required: true
+            }
+        },
+        messages: {
+        	vc_email: {
+                required: "Please enter email",
+                email: "Please enter valid email",
+            },
+            vc_fname: {
+                required: "Please enter first name",
+            },
+            vc_lname: {
+                required: "Please enter last name",
+            },
+            vc_password: {
+                required: "Please enter password",
+            },
+            activate_token: {
+                required: "Activation token required",
+            }
+        }
+    });
 });

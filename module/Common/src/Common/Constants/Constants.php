@@ -62,6 +62,9 @@ class Constants {
     const SENDER_NAME ='Budget And Purchase';
     const CONTACT_US_SUBJECT = 'Contact Form Submission';
 	const USERNAME_NOT_FOUND = 'Username not found';
+	
+	const COMPANY = 'Company';
+	const EMPLOYEE ='Employee';
 }
 
 

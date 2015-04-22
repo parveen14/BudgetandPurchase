@@ -6,42 +6,49 @@ jQuery(document).ready(function(){
           { 'bSortable': false, 'aTargets': [ 3,4 ] }
        ]
 	});
-	
-	$.validator.addMethod('lessthan', function(value, element, param) {
-          return this.optional(element) || parseFloat(value) < parseFloat($(param).val());
-    }, 'Invalid value');
-    $.validator.addMethod('greaterthan', function(value, element, param) {
-          return this.optional(element) || parseFloat(value) >= parseFloat($(param).val());
-    }, 'Invalid value');
+
 	
 	$("#addLevelForm").validate({
 	
         rules: {
-            title: {
+            vc_name: {
                 required: true,
-                maxlength: 50
+                minlength: 3,
+                maxlength: 32,
+				alphanumeric: true
             },
-			level_id: {
+            i_start_limit: {
                 required: true,
+                digits: true,
+				lessthan: '#i_end_limit'
             },
-			'permission[]': {
-                required: true
+            i_end_limit: {
+                required: true,
+                digits: true,
+				greaterthan: '#i_start_limit',
+				min: 1
             },
-			pStatus: {
+			i_status: {
                 required: true
             },
         },
         messages: {
-        	title: {
-                required: "Please enter title."
+        	vc_name: {
+                required: "Please enter name.",
+				minlength: "Minimum 3 and Maximum 32 characters required.",
+                maxlength: "Minimum 3 and Maximum 32 characters required.",
             },
-			level_id: {
-                required: "Please select level for role.",
+            i_start_limit: {
+                required: "Please enter minimum budget.",
+                digits: "Please add integer value only.",
+				lessthan: "This value should be less than maximum budget value."
             },
-			'permission[]': {
-                required: "Please select permissions."
+            i_end_limit: {
+                required: "Please enter maximum budget.",
+                digits: "Please add integer value only.",
+				greaterthan: "This value should be greater than minimum budget value."
             },
-			pStatus: {
+			i_status: {
                 required: "Please select status."
             }
         }

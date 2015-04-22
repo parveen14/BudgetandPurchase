@@ -96,7 +96,7 @@ return array(
 							'defaults' => array(
 									'__NAMESPACE__' => 'Auth\Controller',
 									'controller'    => 'Auth',
-									'action'        => 'activate',
+									'action'        => 'activatecompany',
 							),
 					),
 					'may_terminate' => true,
@@ -116,6 +116,33 @@ return array(
 							),
 					),
 			),
+            'activateuser' => array(
+                'type'    => 'Literal',
+                'options' => array(
+                    'route'    => '/authenticate/activate/user',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'Auth\Controller',
+                        'controller'    => 'Auth',
+                        'action'        => 'activateuser',
+                    ),
+                ),
+                'may_terminate' => true,
+                'child_routes' => array(
+                    'process' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/[:activate_token]',
+                            'constraints' => array(
+                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                	
+                            ),
+                            'defaults' => array(
+                            ),
+                        ),
+                    ),
+                ),
+            ),
             'resetpassword' => array(
                 'type'    => 'Literal',
                 'options' => array(

@@ -51,3 +51,12 @@
 	color: #1D2027;
 	text-shadow: 0 1px 0 #1D2027;
 }
+
+.removemore:nth-child(2) {
+	display:none;
+}
+
+.companyselected a {
+	background: #1caf9a !important;
+	color: #fff!important;
+}

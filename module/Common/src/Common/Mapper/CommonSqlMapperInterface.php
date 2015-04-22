@@ -12,9 +12,9 @@ interface CommonSqlMapperInterface
 
     public function getFullName($id, $table);
 
-    public function getAvailablePoints($params);
+    public function getUserdetails($params);
 
-    public function getEarnedPoints($params);
+    public function getCompanydetails($params);
 
     public function updateAvailablePoints($params);
 
@@ -67,4 +67,19 @@ interface CommonSqlMapperInterface
     public function changeStatusTo($table, $status, $where);
 
 	public function getDatasetsmanyjoin($table, $columns = array(), $where = array(), $params = array());
+	
+	public function getDatasetsjoin($table, $columns = array(), $where = array(), $params = array());
+	
+	public function getUsercompanies($userId);
+	
+	public function getCostcenters($userId);
+	public function getWbs($userId,$i_ref_project_id=NULL);
+	public function getSuppliers($userId);
+	public function addpurchaserequest($data);
+	public function updatepurchaserequest($data);
+	public function getpurchaserequest($id,$i_purchase_id=NULL);
+	
+	public function checkIfLocal();
+	
+	public function getUserpermissions($userId,$companyId);
 }

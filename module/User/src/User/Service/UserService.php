@@ -62,6 +62,37 @@ class UserService implements UserServiceInterface {
     public function addCostcentergroup($data) {
         return $this->userMapper->addCostcentergroup($data);
     }
+    
+    public function addUser($data) {
+        return $this->userMapper->addUser($data);
+    }
+    
+    public function addUserdetails($data) {
+		return $this->userMapper->addUserdetails($data);
+	}
+	
+	public function addWbs($data) {
+	    return $this->userMapper->addWbs($data);
+	}
+	
+	public function updateUserprofile($data) {
+	    return $this->userMapper->updateUserprofile($data);
+	}
+	
+	public function updateCompanyprofile($data) {
+	    return $this->userMapper->updateCompanyprofile($data);
+	}
+	
+	public function deleteWbs($id) {
+	    return $this->userMapper->deleteWbs($id);
+	}
+	
+	public function checkWbsParent($id) {
+	    return $this->userMapper->checkWbsParent($id);
+	}
+	public function getWbsProject($id) {
+	    return $this->userMapper->getWbsProject($id);
+	}
 }
 
 ?>

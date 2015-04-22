@@ -21,7 +21,27 @@ class UserResource extends AbstractResourceListener
      */
     public function create($data)
     {
-        return $this->mapper->authenticateUser($data);
+
+       if(isset($data->method)) {
+           switch ($data->method) {
+               case 'login':
+                   return $this->mapper->authenticateUser($data);
+                   break;
+               case 'updateprofile':
+                   return $this->mapper->updateUser($data);
+                   break;
+               default:
+               case 'forgotpassword':
+                   return $this->mapper->forgotPassword($data);
+                   break;
+               default:
+                   return new ApiProblem(422, 'Method not defined','Server side validation error','Method not found');
+           }
+           
+       } else {
+           return new ApiProblem(422, 'Method not defined','Server side validation error','Method not found');
+       }
+        
        // return new ApiProblem(405, 'The POST method has not been defined');
     }
 

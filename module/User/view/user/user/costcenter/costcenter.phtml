@@ -6,7 +6,7 @@
 	<div class="breadcrumb-wrapper">
 		<span class="label">You are here:</span>
 		<ol class="breadcrumb">
-			<li><a href="<?php echo $this->basePath('user');?>">Dashboard</a></li>
+			<li><a href="<?php echo $this->basePath('dashboard');?>">Dashboard</a></li>
 			<li class="active">Cost Center </li>
 			<li><a href="<?php echo BASE_URL; ?>user/costcenter/addcostcenter" class="btn btn-success btn-xs">Add New Cost Center</a></li>
 		</ol>
@@ -33,9 +33,10 @@
               <thead>
                  <tr>
                     <th>S.No</th> 
-                    <th>Title</th>
+                    <th>Name</th>
                     <th>Budget($)</th>
                     <th>Status</th>
+                    <th class="table-action">Details</th>
                    <th class="table-action">Edit</th>
                  </tr>
               </thead>
@@ -48,24 +49,27 @@
 						
  						$Listing .= '<tr class="gradeU">';
 						$Listing .= '<td>'.$Serial++.'</td>';
- 						 $Listing .= '<td class="center"> '.$costcenterList['title'].'</td>';
- 						 $Listing .= '<td class="center"> '.$costcenterList['budget'].'</td>';
+ 						 $Listing .= '<td class="center"> '.$costcenterList['vc_name'].'</td>';
+ 						 $Listing .= '<td class="center"> '.$costcenterList['i_budget'].'</td>';
 
- 						if($costcenterList['status']=='1') {
+ 						if($costcenterList['i_status']=='1') {
  							$statusImage='<img data-tooltip="tooltip" src="'.$this->basePath ().'/images/status_green.png"  alt="Deactive" data-original-title="Active , click here to deactivate">';
  						 } else {
  							$statusImage='<img data-tooltip="tooltip" src="'.$this->basePath ().'/images/status_red.png"  alt="Deactive" data-original-title="De-active , click here to Activate">';
 				
  						 }
  						 $Listing .= '<td class="center"><a href="javascript:;" class="activeDeactive" 
-                                             data-id='.$costcenterList['id'].' data-type="cost_center" data-status='.$costcenterList['status'].'>'.$statusImage.'</a></td>';
+                                             data-id='.$costcenterList['i_cc_id'].' data-field="i_cc_id" data-type="cost_center" data-status='.$costcenterList['i_status'].'>'.$statusImage.'</a></td>';
  						 $Listing .= '<td class="table-action">
-										  <a href="'.$this->basePath().'/user/costcenter/addcostcenter/'.$costcenterList['id'].'" alt="Edit" title="Edit"><i class="glyphicon glyphicon-edit"></i></a>
+										  <a href="'.$this->basePath().'/user/costcenter/costcenterdetails/'.$costcenterList['i_cc_id'].'" alt="Details" title="Details"><i class="glyphicon glyphicon-folder-open"></i></a>
+ 										</td>';
+ 						 $Listing .= '<td class="table-action">
+										  <a href="'.$this->basePath().'/user/costcenter/addcostcenter/'.$costcenterList['i_cc_id'].'" alt="Edit" title="Edit"><i class="glyphicon glyphicon-edit"></i></a>
  										</td>';
  						 $Listing .= '</tr>';  
  					}
 					} else {
-					    $Listing= "<tr><td colspan=4>No Record to List</td></tr>";
+					    $Listing= "<tr><td></td><td></td><td>No Record to List</td><td></td><td></td><td></td></tr>";
 					    
 					}
  					echo $Listing;

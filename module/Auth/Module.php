@@ -38,6 +38,9 @@ class Module implements AutoloaderProviderInterface
 					'Auth\Model\MyAuthStorage' => function ($sm) {
 						return new \Auth\Model\MyAuthStorage('users');
 					},
+					'Auth\Model\MyAdminAuthStorage' => function ($sm) {
+						return new \Auth\Model\MyAdminAuthStorage('company');
+					},
 					'Auth\Model\Register' => function ($sm){
 						return new \Auth\Model\Register();
 					},
@@ -46,10 +49,19 @@ class Module implements AutoloaderProviderInterface
 					},
 					'AuthService' => function ($sm) {
 								$dbAdapter      = $sm->get('Zend\Db\Adapter\Adapter');
-								$dbTableAuthAdapter  = new DbTableAuthAdapter($dbAdapter, 'users','email_id','password', 'MD5(?)');
+								$dbTableAuthAdapter  = new DbTableAuthAdapter($dbAdapter, 'users','vc_email','vc_password', 'MD5(?)');
 								$authService = new AuthenticationService();
 								$authService->setAdapter($dbTableAuthAdapter);
 								$authService->setStorage($sm->get('Auth\Model\MyAuthStorage'));
+					
+								return $authService;
+					},
+					'AdminAuthService' => function ($sm) {
+								$dbAdapter      = $sm->get('Zend\Db\Adapter\Adapter');
+								$dbTableAuthAdapter  = new DbTableAuthAdapter($dbAdapter, 'company','vc_email','vc_password', 'MD5(?)');
+								$authService = new AuthenticationService();
+								$authService->setAdapter($dbTableAuthAdapter);
+								$authService->setStorage($sm->get('Auth\Model\MyAdminAuthStorage'));
 					
 								return $authService;
 					},

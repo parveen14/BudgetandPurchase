@@ -9,7 +9,7 @@ class AuthenticateForm extends Form{
 		$this->setAttribute('id', 'loginForm');
 		
 		$this->add(array(
-				'name' => 'email_id',
+				'name' => 'vc_email',
 				'attributes' => array(
 						'type'  => 'text',
 						'placeholder' => 'Email',
@@ -18,7 +18,7 @@ class AuthenticateForm extends Form{
 		));
 		
 		$this->add(array(
-				'name' => 'password',
+				'name' => 'vc_password',
 				'attributes' => array(
 						'type'  => 'password',
 						'placeholder' => 'Password',
@@ -26,6 +26,19 @@ class AuthenticateForm extends Form{
 				),
 		));
 		
+		$this->add(array(
+				'type'  => 'Zend\Form\Element\Select',
+				'name' => 'type',
+				'attributes' => array(
+				        'class'=> 'form-control uname'
+				),
+				'options' => array(
+				        'value_options'=>array(
+												'Company'=>'Company',
+												'Employee'=>'Employee'
+											),
+				),
+		));
 		
 		$this->add(array(
 				'name' => 'submit',

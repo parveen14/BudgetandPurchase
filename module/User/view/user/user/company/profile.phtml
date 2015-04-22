@@ -1,0 +1,77 @@
+<?php $this->headTitle('Company');?>
+<div class="pageheader">
+	<h2>
+		<i class="fa fa-user"></i> Profile 
+	</h2>
+	<div class="breadcrumb-wrapper">
+		<span class="label">You are here:</span>
+		<ol class="breadcrumb">
+			<li><a href="<?php echo $this->basePath('dashboard');?>">Dashboard</a></li>
+			<li class="active">Profile</li>
+			
+		</ol>
+	</div>
+</div>
+    
+  <?php if($this->messages) {
+        
+       echo '<div class="panel-body"><div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        '.$this->messages[0].'
+        </div></div>';
+    }
+     if($this->error_messages) {
+        
+       echo '<div class="panel-body"><div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        '.$this->error_messages[0].'
+        </div></div>';
+    } 
+
+    ?>     
+<div class="contentpanel">
+      
+      <div class="row">
+        <div class="col-sm-3">
+			<?php if (!empty($this->details['vc_logo']) && file_exists ( 'public/uploads/userImages/'.$this->details['vc_logo'])) :?>
+				<img src="<?php echo $this->basePath('uploads/userImages/'.($this->details['vc_logo']));?>" class="thumbnail img-responsive" alt="">
+          <?php  else : ?>
+			  <img src="<?php echo $this->basePath('images/photos/profile-1.png');?>" class="thumbnail img-responsive" alt="">
+			<?php endif;?>
+          <div class="mb30"></div>
+          
+          <h5 class="subtitle">Address</h5>
+          <address>
+            <?php echo $this->details['vc_city'] ." ".$this->details['state_name']; ?><br/>
+            <?php echo $this->details['country_name'] ." (".$this->details['vc_zip_code'].")"; ?><br/>
+            <abbr title="Phone">Phone(Mobile):</abbr> <?php echo $this->details['vc_contact_mobile']; ?><br/>
+            <abbr title="Phone">Phone(Landline):</abbr> <?php echo $this->details['vc_contact_landline']; ?><br/>
+            <abbr title="Phone">Skype-Id:</abbr> <?php echo $this->details['vc_contact_skype']; ?>
+          </address>
+          
+        </div><!-- col-sm-3 -->
+        <div class="col-sm-9">
+          
+          <div class="profile-header">
+           <h2 class="profile-name">
+			   <div class="col-sm-10"> <?php echo ucfirst($this->details['vc_company_name']); ?>
+			   </div>
+           <div class="col-sm-2">
+			   <a href="<?php echo BASE_URL; ?>user/edit" class="btn btn-success btn-xs">Edit</a></div>
+           </h2>
+            <div class="profile-location"><i class="fa fa-map-marker"></i> <?php echo $this->details['vc_email']; ?></div><br/>
+            <?php if(!empty($this->details['vc_description'])) { ?>
+          <h5 class="subtitle">About</h5>
+			<p class="mb30">
+				<?php echo $this->details['vc_description']; ?>
+			</p>
+         <?php } ?>
+            <div class="mb20"></div>
+            
+            
+          </div><!-- profile-header -->
+    </div>
+<?php 
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/users.js' );
+
+?>

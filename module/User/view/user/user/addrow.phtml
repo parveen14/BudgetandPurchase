@@ -1,0 +1,33 @@
+<div class="form-group">
+           <label class="col-sm-2 control-label">Business Unit</label>
+		  <div class="col-sm-2">
+			<select name="business_unit[]"  class="form-control mb15 business_unit">
+				<option value="">Select Business Unit</option>
+				<?php if(isset($this->businessunit) && is_array($this->businessunit)) {
+					foreach($this->businessunit as $businessunit) {
+							echo "<option value='".$businessunit['i_bu_id']."'>".$businessunit['vc_short_name']."</option>";
+					}
+				} ?>
+				
+			</select>
+		  </div>
+		  <label class="col-sm-1 control-label">Department</label>
+		  <div class="col-sm-2">
+			<select name="department[]" class="form-control mb15 departments">
+				<option value="">Select Business Unit First</option>
+			</select>
+		  </div>
+		   <label class="col-sm-1 control-label">Role</label>
+              <div class="col-sm-2">
+                <select name="role[]" class="form-control mb15 role">
+					<option value="">Select Role</option>
+					<?php if(isset($this->roles) && is_array($this->roles)) {
+						foreach($this->roles as $roles) {
+								echo "<option value='".$roles['i_role_id']."'>".$roles['vc_name']."</option>";
+						}
+					} ?>
+				</select>
+              </div>
+   <div class="col-sm-2"><button type="button" class="btn btn-primary removemore">Remove</button></div>
+</div>
+              

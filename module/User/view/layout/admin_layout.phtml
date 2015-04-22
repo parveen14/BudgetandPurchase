@@ -51,7 +51,7 @@ prependFile($this->basePath() . '/js/html5shiv.js', 'text/javascript', array(
   <div class="leftpanel">
     
     <div class="logopanel">
-        <h1><span>[</span> Admin <span>]</span></h1>
+        <h1><?php echo $this->userSession->data->vc_company_name; ?></h1>
     </div><!-- logopanel -->
     
     <div class="leftpanelinner">
@@ -59,9 +59,9 @@ prependFile($this->basePath() . '/js/html5shiv.js', 'text/javascript', array(
         <!-- This is only visible to small devices -->
         <div class="visible-xs hidden-sm hidden-md hidden-lg">   
             <div class="media userlogged">
-                <img alt="" src="<?php echo $this->basepath('images/photos/loggeduser.png');?>" class="media-object">
+				<img alt="" src="<?php echo $this->basepath('images/photos/loggeduser.png');?>" class="media-object">
                 <div class="media-body">
-                    <h4><?php echo ucfirst($this->userSession->data->username); ?></h4>
+                    <h4><?php echo ucfirst($this->userSession->data->vc_fname).' '.ucfirst($this->userSession->data->vc_lname); ?></h4>
                 </div>
             </div>
           
@@ -75,38 +75,47 @@ prependFile($this->basePath() . '/js/html5shiv.js', 'text/javascript', array(
       <ul class="nav nav-pills nav-stacked nav-bracket">
 
         <li <?php echo  ($this->url() == '/user' || $this->url() == '/user/dashboard')  ? 'class=active' : '';?>>
-			<a href="<?php echo $this->basepath('/user');?>"><i class="fa fa-home"></i> <span>Dashboard</span></a>
+			<a href="<?php echo $this->basepath('/dashboard');?>"><i class="fa fa-home"></i> <span>Dashboard</span></a>
 		</li>
-		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/businessunit')  ? 'class=active' : '';?>>
+		<li <?php echo ($this->serverUrl(true) == BASE_URL.'user/businessunit')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user/businessunit');?>"><i class="fa fa-briefcase"></i> <span>Business Units</span></a>
 		</li>
-        <li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/department')  ? 'class=active' : '';?>>
+        <li <?php echo ($this->serverUrl(true) == BASE_URL.'user/department')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user/department');?>"><i class="fa fa-building-o"></i> <span>Departments</span></a>
 		</li>
-	<!--	<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/location')  ? 'class=active' : '';?>>
+	<!--	<li <?php echo ($this->serverUrl(true) == BASE_URL.'user/location')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user/location');?>"><i class="fa fa-location-arrow"></i> <span>Locations</span></a>
 		</li>
 	-->	
-		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/project')  ? 'class=active' : '';?>>
+		<li <?php echo ($this->serverUrl(true) == BASE_URL.'user/project')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user/project');?>"><i class="fa fa-envelope"></i> <span>Projects</span></a>
 		</li>
-		
-		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/costcenter')  ? 'class=active' : '';?>>
+		<li <?php echo ($this->serverUrl(true) == BASE_URL.'user/wbs')  ? 'class=active' : '';?>>
+			<a href="<?php echo $this->basepath('/user/wbs');?>"><i class="fa fa-group"></i> <span>WBS</span></a>
+		</li>
+		<li <?php echo ($this->serverUrl(true) == BASE_URL.'user/costcenter')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user/costcenter');?>"><i class="fa fa-envelope"></i> <span>Cost Center</span></a>
 		</li>
-		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/ccgroup')  ? 'class=active' : '';?>>
+		<li <?php echo ($this->serverUrl(true) == BASE_URL.'user/ccgroup')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user/ccgroup');?>"><i class="fa fa-envelope"></i> <span>Cost Center Groups</span></a>
 		</li>
-		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/level')  ? 'class=active' : '';?>>
+		<li <?php echo ($this->serverUrl(true) == BASE_URL.'user/level')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user/level');?>"><i class="fa fa-sitemap"></i> <span>Levels</span></a>
 		</li>
-		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/role')  ? 'class=active' : '';?>>
+		<li <?php echo ($this->serverUrl(true) == BASE_URL.'user/role')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user/role');?>"><i class="fa fa-sitemap"></i> <span>Roles</span></a>
 		</li>
-		<li <?php echo ($this->serverUrl(true) == $this->serverUrl().'/user/group')  ? 'class=active' : '';?>>
+		<li <?php echo ($this->serverUrl(true) == BASE_URL.'user/group')  ? 'class=active' : '';?>>
 			<a href="<?php echo $this->basepath('/user/group');?>"><i class="fa fa-group"></i> <span>Groups</span></a>
 		</li>
-		
+		<?php if($this->userSession->type=="Company") { ?>
+		<li <?php echo ($this->serverUrl(true) == BASE_URL.'user')  ? 'class=active' : '';?>>
+			<a href="<?php echo $this->basepath('/user');?>"><i class="fa fa-group"></i> <span>Users</span></a>
+		</li>
+		<?php } ?>
+		<li <?php echo ($this->serverUrl(true) == BASE_URL.'user/purchaserequest')  ? 'class=active' : '';?>>
+			<a href="<?php echo $this->basepath('/user/purchaserequest');?>"><i class="fa fa-group"></i> <span>Purchase Requests</span></a>
+		</li>
       </ul>
       </div>
     </div>
@@ -116,19 +125,54 @@ prependFile($this->basePath() . '/js/html5shiv.js', 'text/javascript', array(
     <div class="headerbar">
       
       <a class="menutoggle"><i class="fa fa-bars"></i></a>
+		<!-- <?php if($this->userSession->type=='Employee') { 	 ?>
+		  <?php if(isset($this->userSession->usercompanies)) { ?>
+			<div class="col-sm-5"><select class="form-control mb15">
+				<?php foreach($this->userSession->usercompanies as $usercompanies) { ?>
+					<option <?php if($this->userSession->data->i_company_id==$usercompanies['i_ref_company_id']) {
+								echo "selected=selected"; } ?> class="changecompany" data-companyid=<?php echo $usercompanies['i_ref_company_id']; ?>><?php echo $usercompanies['vc_company_name']; ?>
+						</option>
+					<?php } ?>
+                </select></div>
+			<?php } ?>
+         <?php } ?> -->
       <div class="header-right">
-        <ul class="headermenu">
-          
+		  
          
-          
+        <ul class="headermenu">
+		 <?php if($this->userSession->type=='Employee') { 	 ?>
+			 <li>
+            <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <img src="<?php echo $this->basepath('images/photos/loggeduser.png');?>" alt="" />
+                <?php echo 'Companies'; ?>
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-usermenu pull-right">
+                <?php if(isset($this->userSession->usercompanies)) {
+					foreach($this->userSession->usercompanies as $usercompanies) { ?>
+						<li
+						<?php if($this->userSession->data->i_company_id==$usercompanies['i_ref_company_id']) {
+								echo "class='companyselected'";
+							}
+						?>
+						><a href="javascript:;" class="changecompany" data-companyid=<?php echo $usercompanies['i_ref_company_id']; ?> data-companyname="<?php echo $usercompanies['vc_company_name']; ?>"><i class="glyphicon glyphicon-log-out"></i> <?php echo $usercompanies['vc_company_name']; ?></a></li>
+				<?php }
+				} ?>
+              </ul>
+            </div>
+          </li>
+          <?php } ?>
           <li>
             <div class="btn-group">
               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                 <img src="<?php echo $this->basepath('images/photos/loggeduser.png');?>" alt="" />
-                <?php echo ucfirst($this->userSession->data->username); ?>
+                <?php echo ucfirst($this->userSession->data->vc_fname).' '.ucfirst($this->userSession->data->vc_lname); ?>
                 <span class="caret"></span>
               </button>
               <ul class="dropdown-menu dropdown-menu-usermenu pull-right">
+				  <li><a href="<?php echo $this->basepath('user/profile');?>"><i class="glyphicon glyphicon-user"></i> My Profile</a></li>
+                <li><a href="#"><i class="glyphicon glyphicon-cog"></i> Account Settings</a></li>
                 <li><a href="<?php echo $this->basepath('authenticate/logout');?>"><i class="glyphicon glyphicon-log-out"></i> Log Out</a></li>
               </ul>
             </div>
@@ -144,6 +188,7 @@ prependFile($this->basePath() . '/js/html5shiv.js', 'text/javascript', array(
 
 <?php
 echo $this->inlineScript()
+	->prependFile($this->basePath() . '/js/common/common.js')
     ->prependFile($this->basePath() . '/js/customFormValidators.js' )
     ->prependFile($this->basePath() . '/js/chosen.jquery.min.js' )
     ->prependFile($this->basePath() . '/js/jquery.datatables.min.js' )

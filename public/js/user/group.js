@@ -3,31 +3,35 @@ jQuery(document).ready(function(){
 	$('#tableUsers').dataTable({
 		"sPaginationType" : "full_numbers",
 		"aoColumnDefs": [
-          { 'bSortable': false, 'aTargets': [ 2,3 ] }
+          { 'bSortable': false, 'aTargets': [ 2,3,4 ] }
        ]
 	});
 	
 	$("#addGroupForm").validate({
         rules: {
-            title: {
+            vc_name: {
                 required: true,
-                maxlength: 50
+                minlength: 3,
+                maxlength: 32,
+				alphanumeric: true
             },
-			'level[]': {
+			'group_role[]': {
                 required: true
             },
-			pStatus: {
+			i_status: {
                 required: true
             },
         },
         messages: {
-        	title: {
-                required: "Please enter title."
+        	vc_name: {
+                required: "Please enter title.",
+				minlength: "Minimum 3 and Maximum 32 characters required.",
+                maxlength: "Minimum 3 and Maximum 32 characters required.",
             },
-			'level[]': {
-                required: "Please select levels."
+			'group_role[]': {
+                required: "Please select roles."
             },
-			pStatus: {
+			i_status: {
                 required: "Please select status."
             }
         }

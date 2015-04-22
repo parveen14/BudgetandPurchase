@@ -1,0 +1,112 @@
+<?php $this->headTitle('Users');?>
+<div class="pageheader">
+	<h2>
+		<i class="fa fa-user"></i> Profile 
+	</h2>
+	<div class="breadcrumb-wrapper">
+		<span class="label">You are here:</span>
+		<ol class="breadcrumb">
+			<li><a href="<?php echo $this->basePath('dashboard');?>">Dashboard</a></li>
+			<li class="active">Users Profile</li>
+			
+		</ol>
+	</div>
+</div>
+    
+  <?php if($this->messages) {
+        
+       echo '<div class="panel-body"><div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        '.$this->messages[0].'
+        </div></div>';
+    }
+     if($this->error_messages) {
+        
+       echo '<div class="panel-body"><div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        '.$this->error_messages[0].'
+        </div></div>';
+    } 
+    
+    ?>     
+<div class="contentpanel">
+      
+      <div class="row">
+        <div class="col-sm-3">
+			<?php if (!empty($this->details['vc_image']) && file_exists ( 'public/uploads/userImages/'.$this->details['vc_image'])) :?>
+				<img src="<?php echo $this->basePath('uploads/userImages/'.($this->details['vc_image']));?>" class="thumbnail img-responsive" alt="">
+          <?php  else : ?>
+			  <img src="<?php echo $this->basePath('images/photos/profile-1.png');?>" class="thumbnail img-responsive" alt="">
+			<?php endif;?>
+          <div class="mb30"></div>
+          <?php if(!empty($this->details['vc_description'])) { ?>
+          <h5 class="subtitle">About</h5>
+			<p class="mb30">
+				<?php echo $this->details['vc_description']; ?>
+			</p>
+         <?php } ?>
+          <h5 class="subtitle">Address</h5>
+          <address>
+            <?php echo $this->details['vc_city'] ." ".$this->details['state_name']; ?><br/>
+            <?php echo $this->details['country_name'] ." (".$this->details['vc_zip_code'].")"; ?><br/>
+            <abbr title="Phone">Phone:</abbr> <?php echo $this->details['vc_phone']; ?>
+          </address>
+          
+        </div><!-- col-sm-3 -->
+        <div class="col-sm-9">
+          
+          <div class="profile-header">
+           <h2 class="profile-name">
+			   <div class="col-sm-10"> <?php echo ucfirst($this->details['vc_fname'])." ".ucfirst($this->details['vc_lname']); ?>
+			   </div>
+           <div class="col-sm-2">
+			   <a href="<?php echo BASE_URL; ?>user/edit" class="btn btn-success btn-xs">Edit</a></div>
+           </h2>
+            <div class="profile-location"><i class="fa fa-map-marker"></i> <?php echo $this->details['vc_email']; ?></div>
+            <div class="mb20"></div>
+            
+            
+          </div><!-- profile-header -->
+          
+          <!-- Nav tabs -->
+        <ul class="nav nav-tabs nav-justified nav-profile">
+          <li class="active"><a href="#activities" data-toggle="tab"><strong>Companies in which you registered</strong></a></li>
+        </ul>
+        
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div class="tab-pane active" id="activities">
+            <div class="activity-list">
+				<?php foreach($this->details['user_companies'] as $user_companies) { ?>
+					<div class="media">
+						<a class="pull-left" href="javascript:;">
+						<?php if (!empty($user_companies['vc_logo']) && file_exists ( 'public/uploads/userImages/thumbnails/120x120/'.$user_companies['vc_logo'])) :?>
+								<img src="<?php echo $this->basePath('uploads/userImages/thumbnails/120x120/'.($user_companies['vc_logo']));?>" class="thumbnail img-responsive" alt="" style="width: 100px; height: 125px;">
+						<?php  else : ?>
+								<img src="<?php echo $this->basePath('images/photos/profile-1.png');?>" class="thumbnail img-responsive" alt="" style="width: 100px; height: 125px;">
+						<?php endif;?>
+						
+						</a>
+                <div class="media-body">
+                  <h3 class="follower-name"><?php echo $user_companies['vc_company_name']; ?></h3>
+                  <div class="col-sm-6">
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> <?php echo $user_companies['state_name'].",".$user_companies['country_name']; ?></div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> <?php echo $user_companies['vc_description']; ?></div>
+                  </div><div class="col-sm-6">
+                  <div class="profile-position">Business Unit : <?php echo $user_companies['business_unit_name']; ?></div>
+                  <div class="profile-position">Department Assigned : <?php echo $user_companies['department_name']; ?></div>
+                  <div class="profile-position">Role Assigned : <?php echo $user_companies['role_name']; ?></div>
+                  </div>
+                  <div class="mb20"></div>
+                </div>
+              </div>
+<?php } ?>
+          </div>
+        </div><!-- col-sm-9 -->
+      </div><!-- row -->
+      
+    </div>
+<?php 
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/user.js' );
+
+?>

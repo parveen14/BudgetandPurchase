@@ -6,7 +6,7 @@
 	<div class="breadcrumb-wrapper">
 		<span class="label">You are here:</span>
 		<ol class="breadcrumb">
-			<li><a href="<?php echo $this->basePath('user');?>">User</a></li>
+			<li><a href="<?php echo $this->basePath('dashboard');?>">Dashboard</a></li>
 			<li><a href="<?php echo $this->basePath('user/location');?>">Location</a></li>
 			<li class="active"><?php echo ($this->location_id ? 'Edit' : 'Add'); ?></li>
 		</ol>
@@ -19,7 +19,7 @@
 
 	<div class="panel-heading">
           <div class="panel-btns">
-            <a href="" class="panel-close">&times;</a>
+            <!-- a href="" class="panel-close">&times;</a -->
             <a href="" class="minimize">&minus;</a>
           </div>
           <h4 class="panel-title"><?php echo ($this->location_id ? 'Edit' : 'Add'); ?> Location</h4>
@@ -28,7 +28,7 @@
         <div class="panel-body panel-body-nopadding">
             <?php echo ($this->location_id ? '<input type="hidden" value="'.$this->location_id.'" name="location_id" />' : '');?>
             <div class="form-group">
-              <label class="col-sm-3 control-label">Title</label>
+              <label class="col-sm-3 control-label">Title<span class="asterisk">*</span></label>
               <div class="col-sm-6">
                 <input type="text" placeholder="Enter Title" class="form-control" name="title" id="title" value="<?php echo $this->location['title'];?>"/>
               </div>

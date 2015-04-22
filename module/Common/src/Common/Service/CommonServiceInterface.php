@@ -25,14 +25,14 @@ interface CommonServiceInterface {
 	 * @author Vipul
 	 * @param array $params        	
 	 */
-	public function getAvailablePoints($params);
+	public function getUserdetails($params);
 	/**
 	 * Get Earned Points for users / sponsors!
 	 *
 	 * @author Parveen
 	 * @param array $params        	
 	 */
-	public function getEarnedPoints($params);
+	public function getCompanydetails($params);
 	/**
 	 * Update Available Points Credit/Debit for users/sponsors!
 	 *
@@ -212,5 +212,19 @@ interface CommonServiceInterface {
 	 * @param array $params        	
 	 */
 	public function getDatasetsmanyjoin($table, $columns = array(), $where = array(), $params = array());
+	
+	public function getDatasetsjoin($table, $columns = array(), $where = array(), $params = array());
+	
+	public function getUsercompanies($userId);
 
+	public function getCostcenters($userId);
+	public function getWbs($userId,$i_ref_project_id=NULL);
+	public function getSuppliers($userId);
+	public function addpurchaserequest($data);
+	public function updatepurchaserequest($data);
+	public function getpurchaserequest($id,$i_purchase_id=NULL);
+	
+	public function checkIfLocal();
+	
+	public function getUserpermissions($userId,$companyId);
 }

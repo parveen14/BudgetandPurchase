@@ -1,62 +1,46 @@
 jQuery(document).ready(function(){
-	
+
 	$('#tableUsers').dataTable({
 		"sPaginationType" : "full_numbers",
 		"aoColumnDefs": [
-          { 'bSortable': false, 'aTargets': [ 3 ] }
+          { 'bSortable': false, 'aTargets': [ 2,3,4 ] }
        ]
 	}); 
-	
-	$.validator.addMethod('lessthan', function(value, element, param) {
-          return this.optional(element) || parseFloat(value) < parseFloat($(param).val());
-    }, 'Invalid value');
-    $.validator.addMethod('greaterthan', function(value, element, param) {
-          return this.optional(element) || parseFloat(value) >= parseFloat($(param).val());
-    }, 'Invalid value');
-	
+
+	  
 	$("#addRoleForm").validate({
 	
         rules: {
-            title: {
+            vc_name: {
                 required: true,
-                maxlength: 50
+                minlength: 3,
+                maxlength: 32,
+				alphanumeric: true
             },
-			budget_min: {
+            i_ref_limit_id: {
                 required: true,
-				digits: true,
-				lessthan: '#budget_max'
             },
-			budget_max: {
-                required: true,
-				digits: true,
-				greaterthan: '#budget_min',
-				min: 1
-            },
-			'permission[]': {
+			'roles_permission[]': {
                 required: true
             },
-			pStatus: {
+			i_status: {
                 required: true
             },
         },
         messages: {
-        	title: {
-                required: "Please enter title."
+        	vc_name: {
+                required: "Please enter name.",
+				minlength: "Minimum 3 and Maximum 32 characters required.",
+                maxlength: "Minimum 3 and Maximum 32 characters required.",
             },
-			budget_min: {
-                required: "Please add minimum budget.",
-				digits: "Please add integer value only.",
-				lessthan: "This value should be less than maximum budget value."
+        	i_ref_limit_id: {
+                required: "Please select level."
             },
-			budget_max: {
-                required: "Please add maximum budget.",
-				digits: "Please add integer value only.",
-				greaterthan: "This value should be greater than minimum budget value."
-            },
-			'permission[]': {
+			
+			'roles_permission[]': {
                 required: "Please select permissions."
             },
-			pStatus: {
+			i_status: {
                 required: "Please select status."
             }
         }

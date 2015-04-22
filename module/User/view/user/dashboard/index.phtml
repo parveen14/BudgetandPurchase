@@ -1,0 +1,135 @@
+<div class="pageheader">
+      <h2><i class="fa fa-home"></i><?php echo ucfirst($this->layout()->userSession->data->vc_fname); ?>'s Dashboard <span></span></h2>
+      <div class="breadcrumb-wrapper">
+        <span class="label">You are here:</span>
+        <ol class="breadcrumb">
+          <li class="active">Dashboard</li>
+        </ol>
+      </div>
+    </div>
+ <div class="contentpanel">   
+    <div class="row">
+        
+        <div class="col-sm-6 col-md-3">
+          <div class="panel panel-success panel-stat">
+            <div class="panel-heading">
+              
+              <div class="stat">
+                <div class="row">
+                  <div class="col-xs-4">
+                    <img src="images/is-user.png" alt="" />
+                  </div>
+                  <div class="col-xs-8">
+                    <small class="stat-label">Number of Business Units</small>
+                    <h1><?php echo $this->totalBusinessunit ;?></h1>
+                  </div>
+                </div><!-- row -->
+                
+                <div class="mb15"></div>
+              
+              </div><!-- stat -->
+              
+            </div><!-- panel-heading -->
+          </div><!-- panel -->
+        </div><!-- col-sm-6 -->
+        
+        <div class="col-sm-6 col-md-3">
+          <div class="panel panel-danger panel-stat">
+            <div class="panel-heading">
+              
+              <div class="stat">
+                <div class="row">
+                  <div class="col-xs-4">
+                    <img src="images/is-document.png" alt="" />
+                  </div>
+                  <div class="col-xs-8">
+                    <small class="stat-label">Number of Departments</small>
+                    <h1><?php echo $this->totalDepartment ;?></h1>
+                  </div>
+                </div><!-- row -->
+                
+                <div class="mb15"></div>
+                                
+              </div><!-- stat -->
+              
+            </div><!-- panel-heading -->
+          </div><!-- panel -->
+        </div><!-- col-sm-6 -->
+        
+        <div class="col-sm-6 col-md-3">
+          <div class="panel panel-primary panel-stat">
+            <div class="panel-heading">
+              
+              <div class="stat">
+                <div class="row">
+                  <div class="col-xs-4">
+                    <img src="images/is-document.png" alt="" />
+                  </div>
+                  <div class="col-xs-8">
+                    <small class="stat-label">Number of projects</small>
+                    <h1><?php echo $this->totalProjets ;?></h1>
+                  </div>
+                </div><!-- row -->
+                
+                <div class="mb15"></div>
+                  
+              </div><!-- stat -->
+              
+            </div><!-- panel-heading -->
+          </div><!-- panel -->
+        </div><!-- col-sm-6 -->
+        
+        <div class="col-sm-6 col-md-3">
+          <div class="panel panel-dark panel-stat">
+            <div class="panel-heading">
+              
+              <div class="stat">
+                <div class="row">
+                  <div class="col-xs-4">
+                    <img src="images/is-document.png" alt="" />
+                  </div>
+                  <div class="col-xs-8">
+                    <small class="stat-label">Number of roles created</small>
+                    <h1><?php echo $this->totalRole; ?></h1>
+                  </div>
+                </div><!-- row -->
+                
+                <div class="mb15"></div>
+                  
+              </div><!-- stat -->
+              
+            </div><!-- panel-heading -->
+          </div><!-- panel -->
+        </div><!-- col-sm-6 -->
+      </div><!-- row -->
+      
+      <div class="row" style="background: #FCFCFC;">
+        <div class="col-sm-6">
+           <img src="<?php echo $this->basePath (); ?>/images/graph1.png">
+        </div><!-- col-sm-9 -->
+        
+        <div class="col-sm-6">
+          <img src="<?php echo $this->basePath (); ?>/images/graph2.png">
+          
+        </div><!-- col-sm-3 -->
+        
+      </div><!-- row -->
+      <div class="row" style="background: #FCFCFC;">
+        <div class="col-sm-6">
+           <img src="<?php echo $this->basePath (); ?>/images/graph3.png">
+        </div><!-- col-sm-9 -->
+        
+        <div class="col-sm-6">
+          <img src="<?php echo $this->basePath (); ?>/images/graph4.png">
+          
+        </div><!-- col-sm-3 -->
+        
+      </div><!-- row -->
+ </div>
+
+<?php 
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/raphael-2.1.0.min.js' );
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/morris.min.js' );
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/flot/flot.resize.min.js' );
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/flot/flot.min.js' );
+?>

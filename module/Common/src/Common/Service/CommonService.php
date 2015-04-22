@@ -15,6 +15,9 @@ class CommonService implements CommonServiceInterface
         $this->mapper = $mapper;
     }
 
+    public function getEarnedpoints() {
+        
+    }
     /**
      * {@inheritDoc}
      */
@@ -29,14 +32,14 @@ class CommonService implements CommonServiceInterface
         return $this->mapper->getFullName($id, $table);
     }
 
-    public function getAvailablePoints($params)
+    public function getUserdetails($params)
     {
-        return $this->mapper->getAvailablePoints($params);
+        return $this->mapper->getUserdetails($params);
     }
 
-    public function getEarnedPoints($params)
+    public function getCompanydetails($params)
     {
-        return $this->mapper->getEarnedPoints($params);
+        return $this->mapper->getCompanydetails($params);
     }
 
     public function updateAvailablePoints($params)
@@ -168,4 +171,47 @@ class CommonService implements CommonServiceInterface
 	{
         return $this->mapper->getDatasetsmanyjoin($table, $columns, $where, $params);
     }
+    
+    public function getDatasetsjoin($table, $columns = array(), $where = array(), $params = array())
+    {
+        return $this->mapper->getDatasetsjoin($table, $columns, $where, $params);
+    }
+    
+    public function getUsercompanies($userId) {
+			return $this->mapper->getUsercompanies($userId);
+	}
+	
+	public function getCostcenters($userId) {
+			return $this->mapper->getCostcenters($userId);
+	}
+	
+	public function getWbs($userId,$i_ref_project_id=NULL) {
+			return $this->mapper->getWbs($userId,$i_ref_project_id);
+	}
+	
+	public function getSuppliers($userId) {
+			return $this->mapper->getSuppliers($userId);
+	}
+	
+	public function addpurchaserequest($data) {
+	    return $this->mapper->addpurchaserequest($data);
+	}
+	
+	public function updatepurchaserequest($data) {
+	    return $this->mapper->updatepurchaserequest($data);
+	}
+	
+	public function getpurchaserequest($id,$i_purchase_id=NULL) {
+	    return $this->mapper->getpurchaserequest($id,$i_purchase_id);
+	}
+	
+	public function checkIfLocal()
+	{
+	    return $this->mapper->checkIfLocal();
+	}
+	
+	public function getUserpermissions($userId,$companyId)
+	{
+	    return $this->mapper->getUserpermissions($userId,$companyId);
+	}
 }

@@ -26,6 +26,7 @@ use Zend\Json\Server\Cache;
 use Zend\Session\SessionManager;
 use Zend\Mail\Transport\Smtp;
 use Zend\Mail\Transport\SmtpOptions;
+use Assetic\Exception\Exception;
 
 class CommonSqlMapper implements CommonSqlMapperInterface
 {
@@ -104,52 +105,54 @@ class CommonSqlMapper implements CommonSqlMapperInterface
 
    
 
-    public function getAvailablePoints($params)
+    public function getUserdetails($params)
     {
         $sql = new Sql($this->adapter);
-        $select = $sql->select('points_history');
-        $select->where(array(
-            'user_id' => $params['user_id'],
-            'user_type' => $params['user_type']
-        ));
-        $select->columns(array(
-            'available_points'
-        ));
-        $select->order('id desc');
-        $select->limit(1);
+        $select = $sql->select('users');
         
+        $select->join('countries', 'countries.country_id=users.i_ref_country_id', array('country_name'=>'name'),'left');
+        $select->join('states', 'states.states_id=users.i_ref_state_id', array('state_name'=>'name'),'left');
+        
+        
+        $select->where(array(
+            'i_user_id' => $params['i_user_id']
+        ));
+      
+        $select->limit(1);
         $stmt = $sql->prepareStatementForSqlObject($select);
         $result = $stmt->execute();
         
         if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
             $datasets = $result->getResource()->fetch(\PDO::FETCH_ASSOC);
-            return $datasets['available_points'];
+            $usercompanies=$this->getUsercompanies($params['i_user_id']);
+            $datasets['user_companies']=$usercompanies;
+            return $datasets;
         }
-        return 0;
+        return false;
     }
 
-    public function getEarnedPoints($params)
+    public function getCompanydetails($params)
     {
         $sql = new Sql($this->adapter);
-        $select = $sql->select('points_history');
+        $select = $sql->select('company');
+        
+        $select->join('countries', 'countries.country_id=company.i_ref_country_id', array('country_name'=>'name'),'left');
+        $select->join('states', 'states.states_id=company.i_ref_state_id', array('state_name'=>'name'),'left');
+        
+        
         $select->where(array(
-            'user_id' => $params['user_id'],
-            'user_type' => $params['user_type'],
-            'transaction_type' => $params['transaction_type']
+            'i_company_id' => $params['i_company_id']
         ));
-        $select->columns(array(
-            'earned_points' => new Expression('COALESCE(SUM(points), 0)')
-        ));
-        
+      
+        $select->limit(1);
         $stmt = $sql->prepareStatementForSqlObject($select);
-        
         $result = $stmt->execute();
         
         if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
             $datasets = $result->getResource()->fetch(\PDO::FETCH_ASSOC);
-            return $datasets['earned_points'];
+            return $datasets;
         }
-        return 0;
+        return false;
     }
 
     public function updateAvailablePoints($params)
@@ -361,9 +364,7 @@ class CommonSqlMapper implements CommonSqlMapperInterface
         if ($columns) {
             $select->columns($columns);
         }
-        $select->where(array(
-            'id' => $id
-        ));
+        $select->where($id);
         $stmt = $sql->prepareStatementForSqlObject($select);
         $result = $stmt->execute();
         if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
@@ -401,11 +402,13 @@ class CommonSqlMapper implements CommonSqlMapperInterface
         ), $params['files']['name']);
         
         if ($this->httpadapter->isValid()) {
+            
             $filter = new Rename(array(
                 "target" => $params['path'] . $params['files']['name'],
                 "randomize" => true
             ));
             $uploadedFile = $filter->filter($params['files']);
+            
             $result = array(
                 'success' => true,
                 'filename' => basename($uploadedFile['tmp_name'])
@@ -457,7 +460,7 @@ class CommonSqlMapper implements CommonSqlMapperInterface
             't' => $table
         ));
         $select->columns(array(
-            'totalCount' => new Expression('COALESCE(count(t.id),0)')
+            'totalCount' => new Expression('COALESCE(count(*),0)')
         ));
         
         if (! empty($where)) {
@@ -917,33 +920,27 @@ class CommonSqlMapper implements CommonSqlMapperInterface
     {
         $sql = new Sql($this->adapter);
         $select = $sql->select();
-        $select->from('sponsors');
-        $select->where(array(
-            'email_id' => $email_id
-        ));
-        $statement = $sql->prepareStatementForSqlObject($select);
-        $resultsSponsors = $statement->execute();
         
         $select->from('users');
         $select->where(array(
-            'email_id' => $email_id
+            'vc_email' => $email_id
         ));
         $statement = $sql->prepareStatementForSqlObject($select);
         $resultsUsers = $statement->execute();
         
-        return (($resultsSponsors->getAffectedRows() || $resultsUsers->getAffectedRows()) ? true : false);
+        return (($resultsUsers->getAffectedRows()) ? $resultsUsers->getResource()->fetchAll(\PDO::FETCH_ASSOC) : false);
     }
 
     public function changeStatusTo($table, $status, $where)
     {
         $sql = new Sql($this->adapter);
         $update = $sql->update($table)->set(array(
-            'status' => $status,
-            'modified_at' => date('Y-m-d H:i:s')
+            'i_status' => $status,
+            'dt_modified' => date('Y-m-d H:i:s')
         ));
         $update->where($where);
         $selectString = $sql->getSqlStringForSqlObject($update);
-        // echo $selectString;die;
+       
         $result = $this->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
         if ($result->getAffectedRows()) {
             return $result->getAffectedRows();
@@ -1030,4 +1027,336 @@ class CommonSqlMapper implements CommonSqlMapperInterface
 			return $mergeddata;
         }
     }
+    
+    
+    
+    
+    public function getDatasetsjoin($table, $columns = array(), $where = array(), $params = array())
+    {
+        $sql = new Sql($this->adapter);
+        $select = $sql->select($table['table1']);
+        if(isset($table['table2keyrequired'])) {
+            $requiredFields=$table['table2keyrequired'];
+        } else {
+            $requiredFields=array('*');
+        }
+        $select->join($table['table2'], $table['table1'].'.'.$table['table1key'] ."=". $table['table2'].'.'.$table['table2key'], $requiredFields, 'left');
+        if ($columns) {
+            $select->columns($columns);
+        }
+        if ($where) {
+            $select->where($where);
+        }
+        if (isset($params['order_by'])) {
+            $select->order($params['order_by']);
+        }
+        if (isset($params['group_by'])) {
+            $select->group($params['group_by']);
+        }
+        if (isset($params['limit'])) {
+            $select->limit($params['limit']);
+        }
+        if (isset($params['offset'])) {
+            $select->offset($params['offset']);
+        }
+        //echo $sql->getSqlStringForSqlObject($select);die;
+        $stmt = $sql->prepareStatementForSqlObject($select);
+      
+        $result = $stmt->execute();
+        if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
+            $returnData= $result->getResource()->fetchAll(\PDO::FETCH_ASSOC);
+            return $returnData;
+        }
+    }
+    
+    public function getUsercompanies($userId) {
+			$sql = new Sql($this->adapter);
+			$select = $sql->select('user_details');	
+			$select->join('company', 'company.i_company_id=user_details.i_ref_company_id', array('vc_company_name','vc_legal_entity','vc_email','vc_description','vc_logo','vc_street_address','i_ref_country_id','i_ref_state_id','vc_city','vc_contact_mobile','vc_contact_skype','vc_contact_landline'),'left');
+			$select->join('business_units', 'business_units.i_bu_id=user_details.i_ref_bu_id', array('business_unit_name'=>'vc_short_name'),'left');
+			$select->join('departments', 'departments.i_dep_id=user_details.i_ref_dep_id', array('department_name'=>'vc_name'),'left');
+			$select->join('roles', 'roles.i_role_id=user_details.i_ref_role_id', array('role_name'=>'vc_name'),'left');
+			
+			$select->join('countries', 'countries.country_id=company.i_ref_country_id', array('country_name'=>'name'),'left');
+			$select->join('states', 'states.states_id=company.i_ref_state_id', array('state_name'=>'name'),'left');
+
+				
+			$select->where(array('i_ref_user_id'=>$userId));
+            $select->order('i_udtl_id');
+            $select->group('i_ref_company_id');
+            $stmt = $sql->prepareStatementForSqlObject($select);
+        
+			$result = $stmt->execute();
+			if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
+				$returnData= $result->getResource()->fetchAll(\PDO::FETCH_ASSOC);
+				return $returnData;
+			} else {
+					return false;
+			}
+	}
+	
+	public function getCostcenters($userId) {
+			$sql = new Sql($this->adapter);
+			$select = $sql->select('cost_center');	
+			$select->where(array('i_ref_company_id'=>$userId));
+            $select->order('i_cc_id');
+            $stmt = $sql->prepareStatementForSqlObject($select);
+        
+			$result = $stmt->execute();
+			if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
+				$returnData= $result->getResource()->fetchAll(\PDO::FETCH_ASSOC);
+				return $returnData;
+			} 
+			return false;
+	}
+	
+	public function getWbs($userId,$i_ref_project_id=NULL) {
+		$sql = new Sql($this->adapter);
+		if($i_ref_project_id!="") {
+			$whr = " AND t1.`i_ref_project_id`=".$i_ref_project_id." AND t1.`i_type`!=1";
+		} else {
+			$whr =" AND 1=1";
+		}
+		$select = "select 
+t1.`i_rec_id`,t1.`i_parent_id`,t1.`vc_unit`,t1.`i_ref_company_id`,`t1`.`i_ref_project_id`,`t1`.`i_type`,`t3`.`i_ref_department_id`,`t3`.`vc_forecast`,`t3`.`vc_actual`,`t3`.`vc_comment`,
+IF (t1.`i_parent_id` IS NULL,    ( SELECT `projects`.`vc_name` AS `vc_name`  FROM projects WHERE projects.i_project_id=t1.`i_ref_project_id`), t1.`vc_name`)  AS vc_name,
+(
+   CASE
+      WHEN t1.`i_type` =1 THEN (SELECT SUM(`vc_plan`) AS `vc_plan`  FROM wbs_department WHERE i_ref_wbs_id IN (SELECT i_rec_id from wbs WHERE i_ref_project_id=t2.i_ref_project_id))
+      WHEN t1.`i_type` =2 THEN (SELECT SUM(`vc_plan`) AS `vc_plan`  FROM wbs_department WHERE i_ref_wbs_id IN (SELECT i_rec_id from wbs WHERE i_parent_id=t2.i_parent_id OR i_parent_id in (SELECT i_rec_id from wbs WHERE i_parent_id=t2.i_parent_id)))
+	  WHEN t1.`i_type` =3 THEN (SELECT SUM(`vc_plan`) AS `vc_plan`  FROM wbs_department WHERE i_ref_wbs_id IN (SELECT i_rec_id from wbs WHERE i_parent_id=t2.i_parent_id))
+      ELSE vc_plan
+   END
+) AS vc_plan,
+(
+   CASE
+      WHEN t1.`i_type` =1 THEN (SELECT SUM(`vc_forecast`) AS `vc_forecast`  FROM wbs_department WHERE i_ref_wbs_id IN (SELECT i_rec_id from wbs WHERE i_ref_project_id=t2.i_ref_project_id))
+      WHEN t1.`i_type` =2 THEN (SELECT SUM(`vc_forecast`) AS `vc_forecast`  FROM wbs_department WHERE i_ref_wbs_id IN (SELECT i_rec_id from wbs WHERE i_parent_id=t2.i_parent_id OR i_parent_id in (SELECT i_rec_id from wbs WHERE i_parent_id=t2.i_parent_id)))
+	  WHEN t1.`i_type` =3 THEN (SELECT SUM(`vc_forecast`) AS `vc_forecast`  FROM wbs_department WHERE i_ref_wbs_id IN (SELECT i_rec_id from wbs WHERE i_parent_id=t2.i_parent_id))
+      ELSE vc_forecast
+   END
+) AS vc_forecast,
+(
+   CASE
+      WHEN t1.`i_type` =1 THEN (SELECT SUM(`vc_actual`) AS `vc_actual`  FROM wbs_department WHERE i_ref_wbs_id IN (SELECT i_rec_id from wbs WHERE i_ref_project_id=t2.i_ref_project_id))
+      WHEN t1.`i_type` =2 THEN (SELECT SUM(`vc_actual`) AS `vc_actual`  FROM wbs_department WHERE i_ref_wbs_id IN (SELECT i_rec_id from wbs WHERE i_parent_id=t2.i_parent_id OR i_parent_id in (SELECT i_rec_id from wbs WHERE i_parent_id=t2.i_parent_id)))
+	  WHEN t1.`i_type` =3 THEN (SELECT SUM(`vc_actual`) AS `vc_actual`  FROM wbs_department WHERE i_ref_wbs_id IN (SELECT i_rec_id from wbs WHERE i_parent_id=t2.i_parent_id))
+      ELSE vc_actual
+   END
+) AS vc_actual
+from wbs t1 
+left join wbs t2 on t2.i_parent_id = t1.i_rec_id 
+left join wbs_department t3 on t3.i_ref_wbs_id = t2.i_rec_id or t3.i_ref_wbs_id = t1.i_rec_id WHERE `t1`.`i_ref_company_id`=1 AND `t1`.`i_status`=1".$whr." group by t1.i_rec_id" ;
+ 		
+		
+		$stmt = $this->adapter->query($select);
+// 		print_r($result); die;
+		
+// 			$select = $sql->select('wbs');	
+// 			$select->where(array('i_ref_company_id'=>$userId));
+//             $select->order('i_rec_id');
+ //           $stmt = $sql->prepareStatementForSqlObject($select);
+        
+			$result = $stmt->execute();
+			if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
+				$returnData= $result->getResource()->fetchAll(\PDO::FETCH_ASSOC);
+				return $returnData;
+			} 
+			return false;
+	} 
+	public function getSuppliers($userId) {
+			$sql = new Sql($this->adapter);
+			$select = $sql->select('suppliers');
+			$select->join('supplier_details', 'supplier_details.i_ref_supplier_id=suppliers.i_supplier_id', array(),'left');			
+			$select->where(array('supplier_details.i_ref_company_id'=>$userId));
+            $select->order('i_supplier_id');
+            $stmt = $sql->prepareStatementForSqlObject($select);
+        
+			$result = $stmt->execute();
+			if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
+				$returnData= $result->getResource()->fetchAll(\PDO::FETCH_ASSOC);
+				return $returnData;
+			} 
+			return false;
+	
+	}
+	
+	public function addpurchaserequest($data) {
+
+	    if(!is_array($data)) {
+	        throw new \Exception("There is some error, Please check all fields again");
+	    }
+	    $sql = new Sql($this->adapter);
+	    $items = $data['item'];
+	    unset($data['item']);
+	    $data['dt_created']=date('Y-m-d');
+	    $data['dt_modified']=date('Y-m-d');
+	    $data['i_status']=1;
+	    $department = $sql->insert('purchase_requests')->values($data);
+	    $selectString = $sql->getSqlStringForSqlObject($department);
+	    $result = $this->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+
+	    $i_ref_purchase_id=$this->adapter->getDriver()->getLastGeneratedValue();
+        
+		if($result) {
+            if(is_array($items)) {
+                foreach($items as $item) {
+                    unset($item['costcenter']);
+                    $item['i_ref_purchase_id']=$i_ref_purchase_id;
+                    $department = $sql->insert('requested_items')->values($item);
+                    $selectString = $sql->getSqlStringForSqlObject($department);
+                    $result = $this->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+                    $i_id=$this->adapter->getDriver()->getLastGeneratedValue();
+                }
+            }
+                return array(
+                    'success' => $result->getAffectedRows(),
+                    'id' => $i_ref_purchase_id
+                );
+        } else {
+            
+            throw new \Exception("Error while adding purchase request");
+        }
+	    
+	}
+	
+	public function updatepurchaserequest($data) {
+
+	    if(!is_array($data)) {
+	        throw new \Exception("There is some error, Please check all fields again");
+	    }
+	    $sql = new Sql($this->adapter);
+	    $items = $data['item'];
+	    unset($data['item']);
+		$i_purchase_id=$data['i_purchase_id'];
+        unset($data['i_purchase_id']);
+	    $data['dt_modified']=date('Y-m-d');
+	    $data['i_status']=1;
+	    $department = $sql->update('purchase_requests')->set($data)->where(array('i_purchase_id' => $i_purchase_id));
+	    $selectString = $sql->getSqlStringForSqlObject($department);
+	    $result = $this->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+        
+		if($result) {
+            if(isset($items) AND is_array($items)) {
+                    $delete = $sql->delete ( 'requested_items' )->where ( array (
+                        'i_ref_purchase_id' => $i_purchase_id
+                    ) );
+                    $selectString = $sql->getSqlStringForSqlObject($delete);
+                    $result =$this->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+                    
+                   
+							foreach($items as $item) {
+								unset($item['costcenter']);
+								$item['i_ref_purchase_id']=$i_purchase_id;
+								$department = $sql->insert('requested_items')->values($item);
+								$selectString = $sql->getSqlStringForSqlObject($department);
+								$result = $this->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+								$i_id=$this->adapter->getDriver()->getLastGeneratedValue();
+							}
+                }
+        } else {
+            
+            throw new \Exception("Error while adding purchase request");
+        }
+	    
+	}
+	
+	public function getpurchaserequest($id,$i_purchase_id=NULL) { 
+	    		
+		$whr=array('purchase_requests.i_ref_company_id'=>$id,'purchase_requests.i_status'=>1);
+		if(!empty($i_purchase_id)) {
+			$whr['purchase_requests.i_purchase_id']=$i_purchase_id;
+		}
+	    $sql = new Sql($this->adapter);
+	    $select = $sql->select('purchase_requests');
+		$select->join('users', 'users.i_user_id=purchase_requests.i_ref_originator_id', array('vc_originator_fname'=>'vc_fname','vc_originator_lname'=>'vc_lname','vc_originator_email'=>'vc_email'),'left');
+	    $select->join('suppliers', 'suppliers.i_supplier_id=purchase_requests.i_ref_supplier_id', array('vc_supplier_fname'=>'vc_fname','vc_supplier_lname'=>'vc_lname'),'left');
+		$select->join('wbs', 'wbs.i_rec_id=purchase_requests.i_ref_wbs_id', array('vc_wbs_name'=>'vc_name'),'left');
+	    $select->where($whr);
+	    $select->order('i_purchase_id');
+	    $stmt = $sql->prepareStatementForSqlObject($select);
+	    
+	    $result = $stmt->execute();
+	    if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
+	        $returnData= $result->getResource()->fetchAll(\PDO::FETCH_ASSOC);
+	        
+	        foreach($returnData as $key=>$returnData_items) {
+	            $select = $sql->select('requested_items');
+	            $select->join('cost_center', 'cost_center.i_cc_id=requested_items.i_ref_cc_id', array('vc_cc_name'=>'vc_name','vc_cc_account_number'=>'vc_account_number'),'left');
+	            $select->where(array('requested_items.i_ref_purchase_id'=>$returnData_items['i_purchase_id']));
+	            $stmt = $sql->prepareStatementForSqlObject($select);
+	            
+	            $result_items = $stmt->execute();
+	            if ($result_items instanceof ResultInterface && $result_items->isQueryResult() && $result_items->getAffectedRows()) {
+	               
+	                $returnData[$key]['item']= $result_items->getResource()->fetchAll(\PDO::FETCH_ASSOC);
+	               
+	            }
+	        }
+	        
+	        return $returnData;
+	    }
+	    return false;
+	    
+	}
+	
+	public function checkIfLocal()
+	{
+	    $whitelist = array(
+	        '127.0.0.1'
+	    );
+	    if(!in_array($this->getServiceLocator()->get('request')->getServer('REMOTE_ADDR'), $whitelist)){
+	        return false;
+	    }
+	    return true;
+	}
+	
+	public function getUserpermissions($userId,$companyId) {
+	    
+	    $sql = new Sql($this->adapter);
+	    $select = $sql->select('user_details');
+	    $select->columns(array('i_ref_role_id'));
+	    $select->where(array('i_ref_user_id'=>$userId,'user_details.i_ref_company_id'=>$companyId));
+        $select->group('user_details.i_ref_role_id');
+	    $stmt = $sql->prepareStatementForSqlObject($select);
+	    
+	    $result = $stmt->execute();
+	    if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
+	        $returnData= $result->getResource()->fetchAll(\PDO::FETCH_ASSOC);	        
+	        foreach($returnData as $returnData) { 
+	            $select_child = $sql->select('roles_permission');
+	            $select_child->columns(array('i_ref_permission_id'));
+	            $select_child->group('i_ref_permission_id');
+	            $select_child->where(array('i_ref_role_id'=>$returnData['i_ref_role_id']));
+	            $stmt_child = $sql->prepareStatementForSqlObject($select_child);
+	            $result_child = $stmt_child->execute();
+	            $returnData_child[]= $result_child->getResource()->fetchAll(\PDO::FETCH_ASSOC); 
+	        }
+	        
+	        foreach($returnData_child as $returnData_child) {
+	            foreach($returnData_child as $returnData_child_child) {
+	                $permissions_array[]=$returnData_child_child['i_ref_permission_id'];
+	            }
+	        }
+	        
+	        //$permissions=implode(",", $permissions_array);
+	        
+	        $select_permissions = $sql->select('permissions');
+	        $select_permissions->columns(array('vc_actions','vc_description'));
+	        $select_permissions->where(array('i_permission_id'=>$permissions_array));
+	        $stmt_permissions = $sql->prepareStatementForSqlObject($select_permissions);
+	         
+	        $result_permissions = $stmt_permissions->execute();
+	        $returnData_permissions= $result_permissions->getResource()->fetchAll(\PDO::FETCH_ASSOC);
+	       
+	        $all_permissions=array();
+	        foreach($returnData_permissions as $returnData_permissions) {
+	            $all_permissions_old=explode(",",$returnData_permissions['vc_actions']);
+	            $all_permissions=array_merge($all_permissions_old,$all_permissions);
+	        }
+	        return $all_permissions;
+	    } else {
+	        return false;
+	    }
+	}
 }

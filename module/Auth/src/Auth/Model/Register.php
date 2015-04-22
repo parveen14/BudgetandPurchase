@@ -121,10 +121,10 @@ class Register implements ServiceLocatorAwareInterface {
 		
 		return (($resultsSponsors->getAffectedRows () || $resultsUsers->getAffectedRows ()) ? true : false);
 	}
-	public function activateUser($activate_token) {
+	public function activateUser($activate_token,$table='users') {
 		$sql = new Sql ( $this->getAdapter () );
-		$update = $sql->update ( 'users' )->set ( array (
-				'status' => 1,
+		$update = $sql->update ( $table )->set ( array (
+				'i_status' => 1,
 				'activate_token' => '' 
 		) )->where ( array (
 				'activate_token' => $activate_token 
@@ -135,10 +135,34 @@ class Register implements ServiceLocatorAwareInterface {
 		
 		return $results->getAffectedRows ();
 	}
-	public function checkIfActivated($email) {
+	
+	public function activateCompanyuser($data) {
+	    $sql = new Sql ( $this->getAdapter () );
+	    $update = $sql->update ( 'users' )->set ( array (
+	        'vc_fname' => $data['vc_fname'],
+	        'vc_lname' => $data['vc_lname'],
+	        'i_status' => 1,
+	        'activate_token' => ''
+	    ) )->where ( array (
+	        'activate_token' => $data['activate_token'],
+	        'vc_email' => $data['vc_email']
+	    ) );
+	
+	    $selectString = $sql->getSqlStringForSqlObject ( $update );
+	    $results = $this->getAdapter ()->query ( $selectString, Adapter::QUERY_MODE_EXECUTE );
+	
+	    return $results->getAffectedRows ();
+	}
+	
+	public function checkIfActivated($email,$type='Employee') {
+	    if($type=='Company') {
+	        $table='company';
+	    } else {
+	        $table='users';
+	    }
 		$sql = new Sql ( $this->getAdapter () );
-		$select = $sql->select ( 'users' )->where ( array (
-				'email_id' => $email 
+		$select = $sql->select ( $table )->where ( array (
+				'vc_email' => $email 
 		) );
 		$statement = $sql->prepareStatementForSqlObject ( $select );
 		$resultSet = $statement->execute ()->getResource ()->fetch ( \PDO::FETCH_ASSOC );

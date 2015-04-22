@@ -11,7 +11,20 @@ return array(
     'router' => array(
         'routes' => array(
 
-        	'user' => array(
+            'dashboard' => array(
+                'type'    => 'Literal',
+                'options' => array(
+                    'route'    => '/dashboard',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'User\Controller',
+                        'controller'    => 'Dashboard',
+                        'action'        => 'index',
+                    ),
+                ),
+                'may_terminate' => true,
+            ),
+            
+            'user' => array(
             		'type'    => 'Literal',
             		'options' => array(
             				'route'    => '/user',
@@ -41,9 +54,9 @@ return array(
             		),
             ),	
             'department' => array (
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'segment',
                 'options' => array (
-                    'route' => '/user/department',
+                    'route' => '/user/department/[:action][/:slug]',
                     'defaults' => array (
                         '__NAMESPACE__' => 'User\Controller',
                         'controller' => 'User',
@@ -67,9 +80,9 @@ return array(
                 )
             ),
             'businessunit' => array (
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'segment',
                 'options' => array (
-                    'route' => '/user/businessunit',
+                    'route' => '/user/businessunit/[:action][/:slug]',
                     'defaults' => array (
                         '__NAMESPACE__' => 'User\Controller',
                         'controller' => 'User',
@@ -93,9 +106,9 @@ return array(
                 )
             ),
             'role' => array (
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'segment',
                 'options' => array (
-                    'route' => '/user/role',
+                    'route' => '/user/role/[:action][/:slug]',
                     'defaults' => array (
                         '__NAMESPACE__' => 'User\Controller',
                         'controller' => 'User',
@@ -119,9 +132,9 @@ return array(
                 )
             ),
             'level' => array (
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'segment',
                 'options' => array (
-                    'route' => '/user/level',
+                    'route' => '/user/level/[:action][/:slug]',
                     'defaults' => array (
                         '__NAMESPACE__' => 'User\Controller',
                         'controller' => 'User',
@@ -145,9 +158,9 @@ return array(
                 )
             ),
             'group' => array (
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'segment',
                 'options' => array (
-                    'route' => '/user/group',
+                    'route' => '/user/group/[:action][/:slug]',
                     'defaults' => array (
                         '__NAMESPACE__' => 'User\Controller',
                         'controller' => 'User',
@@ -171,9 +184,9 @@ return array(
                 )
             ),
             'project' => array (
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'segment',
                 'options' => array (
-                    'route' => '/user/project',
+                    'route' => '/user/project/[:action][/:slug]',
                     'defaults' => array (
                         '__NAMESPACE__' => 'User\Controller',
                         'controller' => 'User',
@@ -198,9 +211,9 @@ return array(
             ),
             
             'location' => array (
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Segment',
                 'options' => array (
-                    'route' => '/user/location',
+                    'route' => '/user/location/[:action][/:slug]',
                     'defaults' => array (
                         '__NAMESPACE__' => 'User\Controller',
                         'controller' => 'User',
@@ -224,9 +237,9 @@ return array(
                 )
             ),
             'costcenter' => array (
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Segment',
                 'options' => array (
-                    'route' => '/user/costcenter',
+                    'route' => '/user/costcenter/[:action][/:slug]',
                     'defaults' => array (
                         '__NAMESPACE__' => 'User\Controller',
                         'controller' => 'User',
@@ -249,14 +262,78 @@ return array(
                     )
                 )
             ),
-            'costcentergroup' => array (
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+            'ccgroup' => array (
+                'type' => 'Segment',
                 'options' => array (
-                    'route' => '/user/ccgroup',
+                    'route' => '/user/ccgroup[/:action][/:slug]',
                     'defaults' => array (
                         '__NAMESPACE__' => 'User\Controller',
                         'controller' => 'User',
                         'action' => 'costcentergroup'
+                    )
+                ),
+                'may_terminate' => true,
+                'child_routes' => array (
+                    'process' => array (
+                        'type' => 'Segment',
+                        'options' => array (
+                            'route' => '/[:action][/:slug]',
+                            'constraints' => array (
+                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'slug' => '[a-zA-Z0-9_-]*'
+                            ),
+                            'defaults' => array ()
+                        )
+                    )
+                )
+            ),
+            'wbs' => array (
+                'type' => 'Segment',
+                'options' => array (
+                    'route' => '/user/wbs/[:action][/:slug]',
+                    'defaults' => array (
+                        '__NAMESPACE__' => 'User\Controller',
+                        'controller' => 'User',
+                        'action' => 'wbs'
+                    )
+                ),
+                'may_terminate' => true,
+                'child_routes' => array (
+                    'process' => array (
+                        'type' => 'Segment',
+                        'options' => array (
+                            'route' => '/[:action][/:slug]',
+                            'constraints' => array (
+                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'slug' => '[a-zA-Z0-9_-]*'
+                            ),
+                            'defaults' => array ()
+                        )
+                    )
+                )
+            ),
+			'getwbs' => array (
+                'type' => 'Segment',
+                'options' => array (
+                    'route' => '/user/getwbs[/:slug]',
+                    'defaults' => array (
+                        '__NAMESPACE__' => 'User\Controller',
+                        'controller' => 'User',
+                        'action' => 'getwbs'
+                    )
+                ),
+                
+            ),
+			'purchaserequest' => array (
+                'type' => 'Segment',
+                'options' => array (
+                    'route' => '/user/purchaserequest/[:action][/:slug]',
+                    'defaults' => array (
+                        '__NAMESPACE__' => 'User\Controller',
+                        'controller' => 'User',
+                        'action' => 'purchaserequest'
                     )
                 ),
                 'may_terminate' => true,
@@ -292,6 +369,7 @@ return array(
     'controllers' => array(
     	'factories' => array(
 			'User\Controller\User' => 'User\Factory\UserControllerFactory',
+    	    'User\Controller\Dashboard' => 'User\Factory\DashboardControllerFactory',
     	),
     ),
     'view_manager' => array(

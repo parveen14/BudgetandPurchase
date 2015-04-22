@@ -1,0 +1,403 @@
+<?php $this->headTitle('Users');?>
+<div class="pageheader">
+	<h2>
+		<i class="fa fa-user"></i> WBS <span>Listing</span>
+	</h2>
+	<div class="breadcrumb-wrapper">
+		<span class="label">You are here:</span>
+		<ol class="breadcrumb">
+			<li><a href="<?php echo $this->basePath('dashboard');?>">Dashboard</a></li>
+			<li class="active">WBS Departments</li>
+		</ol>
+	</div>
+</div>
+  <?php if($this->messages) {
+        
+       echo '<div class="panel-body"><div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        '.$this->messages[0].'
+        </div></div>';
+    }
+     if($this->error_messages) {
+        
+       echo '<div class="panel-body"><div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        '.$this->error_messages[0].'
+        </div></div>';
+    } ?>     
+<div class="contentpanel">
+	<div class="table-responsive">
+		<div class="form-group">
+			<div class="col-sm-8"></div>
+			<div class="col-sm-4">
+				<label class="col-sm-4 control-label">Select Project</label>
+				<div class="col-sm-8">
+					<select name="projects" id="projects" class="changeprojects form-control mb15">
+						<option value="">Select Project</option>
+						<?php foreach($this->projects as $projects) {
+							echo "<option value='".$projects['i_project_id']."'>".$projects['vc_name']."</option>";
+						} ?>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div id="treeGrid"></div>
+     </div>
+</div>
+<?php 
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/common/common.js' );
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/wbs/demos.js' );
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/wbs/jqxinput.js' );
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/wbs/jqxtooltip.js' );
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/wbs/jqxdata.js' );
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/wbs/jqxdropdownlist.js' );
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/wbs/jqxlistbox.js' );
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/wbs/jqxtreegrid.js' );
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/wbs/jqxdatatable.js' );
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/wbs/jqxscrollbar.js' );
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/wbs/jqxbuttons.js' );
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/wbs/jqxcore.js' );
+	$this->headLink()->appendStylesheet($this->basePath() . '/css/user/wbs/jqx.base.css');
+$this->inlineScript()->captureStart();
+echo <<<JS
+   $(document).ready(function () {           
+            getWbs();
+			$(".changeprojects").on('change',function(){
+				//alert($(this).val());
+				getWbs($(this).val());
+			});
+        });
+		
+		function getWbs(i_ref_project_id) { 
+			var newRowID = null;
+			
+			if(typeof i_ref_project_id === 'undefined'){
+				i_ref_project_id="";
+			}
+            // prepare the data
+            var source =
+            {
+                dataType: "json",
+                dataFields: [
+                    { name: "Id", type: "number" },
+                    { name: "Name", type: "string" },
+                    { name: "ParentID", type: "number" },
+                    { name: "i_type", type: "number" },
+                    { name: "Units", type: "number" },
+	                { name: "vc_plan", type: "string" },
+	                { name: "vc_forecast", type: "string" },
+	                { name: "vc_actual", type: "string" },
+	                { name: "vc_comment", type: "string" }
+                ],
+                hierarchy:
+                {
+                    keyDataField: { name: 'Id' },
+                    parentDataField: { name: 'ParentID' }
+                },
+                id: 'Id',
+                url: ajax_url+'/user/getwbs/'+i_ref_project_id,
+                addRow: function (rowID, rowData, position, parentID, commit) {
+                     // synchronize with the server - send insert command
+                     // call commit with parameter true if the synchronization with the server is successful 
+                     // and with parameter false if the synchronization failed.
+                     // you can pass additional argument to the commit callback which represents the new ID if it is generated from a DB.
+                    commit(true);
+                    newRowID = rowID;
+                    $.post(ajax_url+'/user/addwbs', {parentID: parentID,i_type: rowData.i_type}, function(result){
+                        rowData.i_type=rowData.i_type;
+                        rowData.uid=result.id;
+                    });
+                 },
+                 updateRow: function (rowID, rowData, commit) { 
+						if(rowData.uid) {
+							editID=rowData.uid;
+						} else {
+							editID=rowID;
+						}
+                        // synchronize with the server - send update command
+                        // call commit with parameter true if the synchronization with the server is successful 
+                        // and with parameter false if the synchronization failed.
+                    
+                    $.post(ajax_url+'/user/addwbs', { rowID: editID, Name: rowData.Name, Units: rowData.Units, i_type: rowData.i_type, vc_plan: rowData.vc_plan, vc_forecast: rowData.vc_forecast, vc_actual: rowData.vc_actual, vc_comment: rowData.vc_comment }, function(result){
+						
+						if(result.exception_message){
+								bootbox.dialog({
+									closeButton: true,
+									message: result.exception_message,
+									title: "Alert",
+									buttons: {
+										main: {
+											label: "Ok",
+											className: "btn-danger",
+											callback: function() {
+												
+											}
+										}
+									}
+								});
+							} else { 
+								rowData.i_type=rowData.i_type;
+							}
+							
+                    });
+					commit(true);
+					
+                 },
+                 deleteRow: function (rowID, commit) { 
+					//alert(rowID);
+                     // synchronize with the server - send delete command
+                     // call commit with parameter true if the synchronization with the server is successful 
+                     // and with parameter false if the synchronization failed.
+	                  $.post(ajax_url+'/user/deletewbs', { rowID: rowID}, function(result){
+						
+						if(result.exception_message){
+								bootbox.dialog({
+									closeButton: true,
+									message: result.exception_message,
+									title: "Alert",
+									buttons: {
+										main: {
+											label: "Ok",
+											className: "btn-danger",
+											callback: function() {
+												
+											}
+										}
+									}
+								});
+							} 
+							
+                    });
+                     commit(true);
+					  
+                 }
+             };
+
+             var dataAdapter = new $.jqx.dataAdapter(source, {
+                loadComplete: function () { 
+                    // data is loaded.
+                }
+            });
+
+             $("#treeGrid").jqxTreeGrid(
+            {
+                width: 1020,
+				pageSize:50,
+                source: dataAdapter, 
+                pageable: true,
+                editable: true,
+                showToolbar: true,
+                altRows: true,
+                ready: function()
+                {
+                    // called when the DatatreeGrid is loaded.         
+                },
+                pagerButtonsCount: 8,
+                toolbarHeight: 35,
+                renderToolbar: function(toolBar)
+                { 
+                    var toTheme = function (className) {
+                        if (theme == "") return className;
+                        return className + " " + className + "-" + theme;
+                    }
+
+                    // appends buttons to the status bar.
+                    var container = $("<div style='overflow: hidden; position: relative; height: 100%; width: 100%;'></div>");
+                    var buttonTemplate = "<div style='float: left; padding: 3px; margin: 2px;'><div style='margin: 4px; width: 16px; height: 16px;'></div></div>";
+                    var addButton = $(buttonTemplate);
+                    var editButton = $(buttonTemplate);
+                    var deleteButton = $(buttonTemplate);
+                    var cancelButton = $(buttonTemplate);
+                    var updateButton = $(buttonTemplate);
+                    container.append(addButton);
+                    container.append(editButton);
+                    container.append(deleteButton);
+                    container.append(cancelButton);
+                    container.append(updateButton);
+
+                    toolBar.append(container);
+                    addButton.jqxButton({cursor: "pointer", enableDefault: false, disabled: true, height: 25, width: 25 });
+                    addButton.find('div:first').addClass(toTheme('jqx-icon-plus'));
+                    addButton.jqxTooltip({ position: 'bottom', content: "Add"});
+
+                    editButton.jqxButton({ cursor: "pointer", disabled: true, enableDefault: false,  height: 25, width: 25 });
+                    editButton.find('div:first').addClass(toTheme('jqx-icon-edit'));
+                    editButton.jqxTooltip({ position: 'bottom', content: "Edit"});
+
+                    deleteButton.jqxButton({ cursor: "pointer", disabled: true, enableDefault: false,  height: 25, width: 25 });
+                    deleteButton.find('div:first').addClass(toTheme('jqx-icon-delete'));
+                    deleteButton.jqxTooltip({ position: 'bottom', content: "Delete"});
+
+                    updateButton.jqxButton({ cursor: "pointer", disabled: true, enableDefault: false,  height: 25, width: 25 });
+                    updateButton.find('div:first').addClass(toTheme('jqx-icon-save'));
+                    updateButton.jqxTooltip({ position: 'bottom', content: "Save Changes"});
+
+                    cancelButton.jqxButton({ cursor: "pointer", disabled: true, enableDefault: false,  height: 25, width: 25 });
+                    cancelButton.find('div:first').addClass(toTheme('jqx-icon-cancel'));
+                    cancelButton.jqxTooltip({ position: 'bottom', content: "Cancel"});
+
+                    var updateButtons = function (action) {
+                        switch (action) {
+                            case "Select":
+                                addButton.jqxButton({ disabled: false });
+                                deleteButton.jqxButton({ disabled: false });
+                                editButton.jqxButton({ disabled: false });
+                                cancelButton.jqxButton({ disabled: true });
+                                updateButton.jqxButton({ disabled: true });
+                                break;
+							case "Selectparent":
+                                addButton.jqxButton({ disabled: false });
+                                deleteButton.jqxButton({ disabled: true });
+                                editButton.jqxButton({ disabled: true });
+                                cancelButton.jqxButton({ disabled: true });
+                                updateButton.jqxButton({ disabled: true });
+                                break;
+							case "Selectlastlevel":
+                                addButton.jqxButton({ disabled: true });
+                                deleteButton.jqxButton({ disabled: false });
+                                editButton.jqxButton({ disabled: false });
+                                cancelButton.jqxButton({ disabled: false });
+                                updateButton.jqxButton({ disabled: false });
+                                break;
+                            case "Unselect":
+                                addButton.jqxButton({ disabled: true });
+                                deleteButton.jqxButton({ disabled: true });
+                                editButton.jqxButton({ disabled: true });
+                                cancelButton.jqxButton({ disabled: true });
+                                updateButton.jqxButton({ disabled: true });
+                                break;
+                            case "Edit":
+                                addButton.jqxButton({ disabled: true });
+                                deleteButton.jqxButton({ disabled: true });
+                                editButton.jqxButton({ disabled: true });
+                                cancelButton.jqxButton({ disabled: false });
+                                updateButton.jqxButton({ disabled: false });
+                                break;
+                            case "End Edit":
+                                addButton.jqxButton({ disabled: false });
+                                deleteButton.jqxButton({ disabled: false });
+                                editButton.jqxButton({ disabled: false });
+                                cancelButton.jqxButton({ disabled: true });
+                                updateButton.jqxButton({ disabled: true });
+                                break;
+
+                        }
+                    }
+
+                    var rowKey = null;
+                    var i_type = null;
+                    $("#treeGrid").on('rowSelect', function (event) {
+					
+                        var args = event.args;
+                        rowKey = args.key;
+						
+						if(args.row) {
+								i_type = args.row.i_type;
+								if(args.row.ParentID) { 
+									if(args.row.i_type && args.row.i_type==4) {
+										updateButtons('Selectlastlevel'); 
+									} else {
+										updateButtons('Select'); 
+									}
+								} else { 
+									updateButtons('Selectparent');
+								}
+							} else {
+								if(event.args.owner.rowinfo[rowKey].row.level) {
+									if($("#projects").val()=="") {
+										i_type = event.args.owner.rowinfo[rowKey].row.level+1;
+									} else {
+										i_type = event.args.owner.rowinfo[rowKey].row.level+2;
+									}
+								}
+								
+								if(i_type==4) { 
+											updateButtons('Selectlastlevel'); 
+									} else {
+											updateButtons('Select'); 
+									}
+							}
+                    });
+                    $("#treeGrid").on('rowUnselect', function (event) {
+                        updateButtons('Unselect');
+                    });
+                    $("#treeGrid").on('rowEndEdit', function (event) {
+                        updateButtons('End Edit');
+                    });
+                    $("#treeGrid").on('rowBeginEdit', function (event) {
+                        updateButtons('Edit');
+                    });
+                    addButton.click(function (event) {
+                        if (!addButton.jqxButton('disabled')) {
+                            $("#treeGrid").jqxTreeGrid('expandRow', rowKey);
+                            // add new empty row.
+                            $("#treeGrid").jqxTreeGrid('addRow', null, {i_type:i_type}, 'first', rowKey);
+                            // select the first row and clear the selection.
+                            $("#treeGrid").jqxTreeGrid('clearSelection');
+                            $("#treeGrid").jqxTreeGrid('selectRow', newRowID);
+                            // edit the new row.
+                            $("#treeGrid").jqxTreeGrid('beginRowEdit', newRowID);
+                            updateButtons('add');
+                        }
+                    });
+
+                    cancelButton.click(function (event) {
+                        if (!cancelButton.jqxButton('disabled')) {
+                            // cancel changes.
+                            $("#treeGrid").jqxTreeGrid('endRowEdit', rowKey, true);
+                        }
+                    });
+
+                    updateButton.click(function (event) {
+                        if (!updateButton.jqxButton('disabled')) {
+                            // save changes.
+                            $("#treeGrid").jqxTreeGrid('endRowEdit', rowKey, false);
+                        }
+                    });
+
+                    editButton.click(function () {
+                        if (!editButton.jqxButton('disabled')) {
+                            $("#treeGrid").jqxTreeGrid('beginRowEdit', rowKey);
+                            updateButtons('edit');
+
+                        }
+                    });
+                    deleteButton.click(function () {
+                        if (!deleteButton.jqxButton('disabled')) {
+                            var selection = $("#treeGrid").jqxTreeGrid('getSelection');
+                            if (selection.length > 1) {
+                                var keys = new Array();
+                                for (var i = 0; i < selection.length; i++) {
+                                    keys.push($("#treeGrid").jqxTreeGrid('getKey', selection[i]));
+                                }
+                                $("#treeGrid").jqxTreeGrid('deleteRow', keys);
+                            }
+                            else {
+                                $("#treeGrid").jqxTreeGrid('deleteRow', rowKey);
+                            }
+							//alert(rowKey);
+                            updateButtons('delete');
+
+                        }
+                    });
+                },
+                columns: [
+                  { text: 'WBS', dataField: "Name", align: 'center', width: '40%' },
+                  { text: 'Units', dataField: "Units", align: 'right', cellsAlign: 'right', width: '7%' },
+	              { text: 'Plan', dataField: "vc_plan", align: 'right', cellsAlign: 'right', width: '7%' },
+            	  { text: 'Forcast', dataField: "vc_forecast", align: 'right', cellsAlign: 'right', width: '8%' },
+            	  { text: 'Actual', dataField: "vc_actual", align: 'right', cellsAlign: 'right', width: '8%' },
+	              { text: 'Comments', dataField: "vc_comment", align: 'right', cellsAlign: 'right', width: '30%' }
+                ],
+				
+				/** editSettings : {
+					editOnDoubleClick:false
+				}  **/
+            });
+		
+		}
+JS;
+$this->inlineScript()->captureEnd();
+
+	
+?>

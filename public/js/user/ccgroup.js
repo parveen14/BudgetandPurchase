@@ -3,7 +3,7 @@ jQuery(document).ready(function(){
 	$('#tableUsers').dataTable({
 		"sPaginationType" : "full_numbers",
 		"aoColumnDefs": [
-          { 'bSortable': false, 'aTargets': [ 2,3 ] }
+          { 'bSortable': false, 'aTargets': [ 2,3,4 ] }
        ]
 	});
 	
@@ -12,19 +12,29 @@ jQuery(document).ready(function(){
 	$("#addCostcentergroupForm").validate({
 	
         rules: {
-            title: {
+            vc_account_group: {
                 required: true,
-                maxlength: 50
+                minlength: 3,
+                maxlength: 32,
+				alphanumeric: true
             },
-			pStatus: {
+            'costcenter_costgroup[]': {
+                required: true
+            },
+			i_status: {
                 required: true
             },
         },
         messages: {
-        	title: {
-                required: "Please enter title."
+        	vc_account_group: {
+                required: "Please enter title.",
+				minlength: "Minimum 3 and Maximum 32 characters required.",
+                maxlength: "Minimum 3 and Maximum 32 characters required.",
             },
-			pStatus: {
+            'costcenter_costgroup[]': {
+                required: "Please select cost center."
+            },
+			i_status: {
                 required: "Please select status."
             }
         }

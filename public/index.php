@@ -1,15 +1,15 @@
 <?php 
 defined('APPLICATION_ROOT')
-|| define('APPLICATION_ROOT', realpath(__DIR__ . '/../'));
+|| define('APPLICATION_ROOT', realpath(__DIR__ . '/../public/'));
 
 defined('BASE_URL')
-|| define('BASE_URL', 'http://budgetandpurchase.local.com/');
+|| define('BASE_URL', 'http://localhost:8085/budgetandpurchase/public/');
 
 defined('PUBLIC_PATH')
 || define('PUBLIC_PATH', null);
 
 defined('PROJECT_NAME')
-|| define('PROJECT_NAME', 'http://budgetandpurchase.local.com/');
+|| define('PROJECT_NAME', 'localhost:8085/budgetandpurchase/');
 ini_set('display_errors', true);
 
 /**

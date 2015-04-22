@@ -15,7 +15,9 @@ $(function() {
 	}, "Please specify a different (non-default) value");
 
 	$(document).on('click','.popover-close-button', function(event){
-		$('input[name="'+$(this).data('elem')+'"],textarea[name="'+$(this).data('elem')+'"],select[name="'+$(this).data('elem')+'"]').next().popover('hide');
+		//$('input[name="'+$(this).data('elem')+'"],textarea[name="'+$(this).data('elem')+'"],select[name="'+$(this).data('elem')+'"]').next().popover('hide');
+		
+		$(this).parent().parent('div .popover-validations').hide('slow');
 	});
 });
 

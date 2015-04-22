@@ -1,22 +1,30 @@
-<?php $this->headTitle(($this->businessunit_id ? 'Edit Business Unit' : 'Add Business Unit'));
+<?php $this->headTitle(($this->i_group_id ? 'Edit Business Unit' : 'Add Business Unit'));
 
 	if(isset($this->group['group_role']) and !empty($this->group['group_role'])) {
 		$grouparray=$this->group['group_role'];
-		$rolesarray = array_map(function ($grouparray) { return $grouparray['role_id']; }, $grouparray);
+		$rolesarray = array_map(function ($grouparray) { return $grouparray['i_ref_role_id']; }, $grouparray);
 	} else {
 		$rolesarray=array();
 	}
+	
+	if(isset($this->group['group_permission']) and !empty($this->group['group_permission'])) {
+		$permissionarray=$this->group['group_permission'];
+		$permissionsarray = array_map(function ($permissionarray) { return $permissionarray['i_ref_permission_id']; }, $permissionarray);
+	} else {
+		$permissionsarray=array();
+	}
+	
 ?>
 <div class="pageheader">
 	<h2>
-		<i class="fa fa-file"></i> Group <span><?php echo ($this->group_id ? 'Edit' : 'Add'); ?></span>
+		<i class="fa fa-file"></i> Group <span><?php echo ($this->i_ref_role_id ? 'Edit' : 'Add'); ?></span>
 	</h2>
 	<div class="breadcrumb-wrapper">
 		<span class="label">You are here:</span>
 		<ol class="breadcrumb">
-			<li><a href="<?php echo $this->basePath('user');?>">User</a></li>
+			<li><a href="<?php echo $this->basePath('dashboard');?>">Dashboard</a></li>
 			<li><a href="<?php echo $this->basePath('user/group');?>">Group</a></li>
-			<li class="active"><?php echo ($this->group_id ? 'Edit' : 'Add'); ?></li>
+			<li class="active"><?php echo ($this->group_id ? 'Edit' : 'Add'); ?> Group</li>
 		</ol>
 	</div>
 </div>
@@ -27,18 +35,18 @@
 
 	<div class="panel-heading">
           <div class="panel-btns">
-            <a href="" class="panel-close">&times;</a>
+            <!-- a href="" class="panel-close">&times;</a -->
             <a href="" class="minimize">&minus;</a>
           </div>
-          <h4 class="panel-title"><?php echo ($this->group_id ? 'Edit' : 'Add'); ?> Group</h4>
+          <h4 class="panel-title"><?php echo ($this->i_group_id ? 'Edit' : 'Add'); ?> Group</h4>
         </div>
 		 <form id="addGroupForm" name="addGroupForm" class="form-horizontal form-bordered" method="POST" enctype="multipart/form-data">
         <div class="panel-body panel-body-nopadding">
-            <?php echo ($this->group_id ? '<input type="hidden" value="'.$this->group_id.'" name="group_id" />' : '');?>
+            <?php echo ($this->i_group_id ? '<input type="hidden" value="'.$this->i_group_id.'" name="i_group_id" />' : '');?>
             <div class="form-group">
-              <label class="col-sm-3 control-label">Title</label>
+              <label class="col-sm-3 control-label">Name<span class="asterisk">*</span></label>
               <div class="col-sm-6">
-                <input type="text" placeholder="Enter Title" class="form-control" name="title" id="title" value="<?php echo $this->group['title'];?>"/>
+                <input type="text" placeholder="Enter Name" class="form-control" name="vc_name" id="vc_name" value="<?php echo $this->group['vc_name'];?>"/>
               </div>
             </div>
             <div class="form-group">
@@ -46,32 +54,47 @@
              <label class="col-sm-3 control-label">Description</label>
               <div class="col-sm-9">
                
-               <textarea id="description" name="description" placeholder="Enter description here..." class="form-control" rows="10"><?php echo $this->group['description'];?></textarea>
+               <textarea id="description" name="vc_description" placeholder="Enter description here..." class="form-control" rows="10"><?php echo $this->group['vc_description'];?></textarea>
               
               </div>
             </div>  
 			<div class="form-group">
               
-             <label class="col-sm-3 control-label">Roles</label>
+             <label class="col-sm-3 control-label">Roles<span class="asterisk">*</span></label>
               <div class="col-sm-4">
-				   <select class="form-control mb15"  id="role" name="role[]" multiple="multiple">
+				   <select class="form-control mb15"  id="group_role" name="group_role[]" multiple="multiple">
 						<?php
-							foreach($this->role as $roles) {
-								echo "<option value=".$roles['id'];
-								if(in_array($roles['id'],$rolesarray)) { echo " selected='selected'"; }
-								echo ">".$roles['title']."</option>";
+							foreach($this->roles as $roles) {
+								echo "<option value=".$roles['i_role_id'];
+								if(in_array($roles['i_role_id'],$rolesarray)) { echo " selected='selected'"; }
+								echo ">".$roles['vc_name']."</option>";
 							}
 						?>
 				   </select>
               </div>
-            </div>   			
+            </div>  
+            <div class="form-group">
+              
+             <label class="col-sm-3 control-label">Permissions<span class="asterisk">*</span></label>
+              <div class="col-sm-4">
+				   <select class="form-control mb15"  id="group_permission" name="group_permission[]" multiple="multiple">
+						<?php
+							foreach($this->permissions as $permissions) {
+								echo "<option value=".$permissions['i_permission_id'];
+								if(in_array($permissions['i_permission_id'],$permissionsarray)) { echo " selected='selected'"; }
+								echo ">".$permissions['vc_name']."</option>";
+							}
+						?>
+				   </select>
+              </div>
+            </div>   	 			
             <div class="form-group">
               <label class="col-sm-3 control-label">Status</label>
               <div class="col-sm-5">
                
-                <select  class="form-control mb15" id="pStatus" name="pStatus">
+                <select  class="form-control mb15" id="i_status" name="i_status">
                   <option value="1">Active</option>
-                  <option value="0" <?php echo (!$this->group['status'] ? 'selected="selected"' : '');?>>Inactive</option>
+                  <option value="0" <?php echo (!$this->group['i_status'] ? 'selected="selected"' : '');?>>Inactive</option>
                 </select>
               
               </div>
@@ -80,7 +103,7 @@
         <div class="panel-footer">
 			 <div class="row">
 				<div class="col-sm-6 col-sm-offset-3">
-				  <input type="submit" data-after-loading-text="<?php echo ($this->group_id ? 'Update' : 'Add'); ?>" data-loading-text="Please Wait..." id="addPageBtn" name="addPageBtn" value="<?php echo ($this->group_id ? 'Update' : 'Add');?>" class="btn btn-primary">&nbsp;
+				  <input type="submit" data-after-loading-text="<?php echo ($this->i_status ? 'Update' : 'Add'); ?>" data-loading-text="Please Wait..." id="addPageBtn" name="addPageBtn" value="<?php echo ($this->i_status ? 'Update' : 'Add');?>" class="btn btn-primary">&nbsp;
 				  <a href="<?php echo $this->basepath('user/group');?>" class="btn btn-default">Cancel</a>
 				</div>
 			 </div>

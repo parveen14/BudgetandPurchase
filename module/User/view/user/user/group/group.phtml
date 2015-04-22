@@ -6,7 +6,7 @@
 	<div class="breadcrumb-wrapper">
 		<span class="label">You are here:</span>
 		<ol class="breadcrumb">
-			<li><a href="<?php echo $this->basePath('user');?>">Dashboard</a></li>
+			<li><a href="<?php echo $this->basePath('dashboard');?>">Dashboard</a></li>
 			<li class="active">Groups</li>
 			<li><a href="<?php echo BASE_URL; ?>user/group/addgroup" class="btn btn-success btn-xs">Add New Group</a></li>
 		</ol>
@@ -33,8 +33,9 @@
               <thead>
                  <tr>
                     <th>S.No</th> 
-                    <th>Title</th>
+                    <th>Name</th>
                     <th>Status</th>
+                    <th class="table-action">Details</th>
                     <th class="table-action">Edit</th>
                  </tr>
               </thead>
@@ -47,23 +48,25 @@
 						
  						$Listing .= '<tr class="gradeU">';
 						$Listing .= '<td>'.$Serial++.'</td>';
- 						 $Listing .= '<td class="center"> '.$groupList['title'].'</td>';
+ 						 $Listing .= '<td class="center"> '.$groupList['vc_name'].'</td>';
 
- 						if($groupList['status']=='1') {
+ 						if($groupList['i_status']=='1') {
  							$statusImage='<img data-tooltip="tooltip" src="'.$this->basePath ().'/images/status_green.png"  alt="Deactive" data-original-title="Active , click here to deactivate">';
  						 } else {
  							$statusImage='<img data-tooltip="tooltip" src="'.$this->basePath ().'/images/status_red.png"  alt="Deactive" data-original-title="De-active , click here to Activate">';
-				
  						 }
  						 $Listing .= '<td class="center"><a href="javascript:;" class="activeDeactive" 
-                                             data-id='.$groupList['id'].' data-type="group" data-status='.$groupList['status'].'>'.$statusImage.'</a></td>';
+                                             data-id='.$groupList['i_group_id'].' data-type="groups" data-field="i_group_id" data-status='.$groupList['i_status'].'>'.$statusImage.'</a></td>';
  						 $Listing .= '<td class="table-action">
-										  <a href="'.$this->basePath().'/user/group/addgroup/'.$groupList['id'].'" alt="Edit" title="Edit"><i class="glyphicon glyphicon-edit"></i></a>
+										  <a href="'.$this->basePath().'/user/group/groupdetails/'.$groupList['i_group_id'].'" alt="Details" title="Details"><i class="glyphicon glyphicon-folder-open"></i></a>
+ 										</td>';
+ 						 $Listing .= '<td class="table-action">
+										  <a href="'.$this->basePath().'/user/group/addgroup/'.$groupList['i_group_id'].'" alt="Edit" title="Edit"><i class="glyphicon glyphicon-edit"></i></a>
  										</td>';
  						 $Listing .= '</tr>';  
  					}
 					} else {
-					    $Listing= "<tr><td colspan=4>No Record to List</td></tr>";
+					    $Listing= "<tr><td></td><td></td><td>No Record to List</td><td></td><td></td></tr>";
 					    
 					}
  					echo $Listing;

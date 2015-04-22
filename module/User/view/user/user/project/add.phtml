@@ -1,14 +1,14 @@
-<?php $this->headTitle(($this->project_id ? 'Edit Project' : 'Add Project'));?>
+<?php $this->headTitle(($this->i_project_id ? 'Edit Project' : 'Add Project'));?>
 <div class="pageheader">
 	<h2>
-		<i class="fa fa-file"></i> Project <span><?php echo ($this->project_id ? 'Edit' : 'Add'); ?></span>
+		<i class="fa fa-file"></i> Project <span><?php echo ($this->i_project_id ? 'Edit' : 'Add'); ?></span>
 	</h2>
 	<div class="breadcrumb-wrapper">
 		<span class="label">You are here:</span>
 		<ol class="breadcrumb">
-			<li><a href="<?php echo $this->basePath('user');?>">User</a></li>
+			<li><a href="<?php echo $this->basePath('dashboard');?>">Dashboard</a></li>
 			<li><a href="<?php echo $this->basePath('user/project');?>">Project</a></li>
-			<li class="active"><?php echo ($this->project_id ? 'Edit' : 'Add'); ?></li>
+			<li class="active"><?php echo ($this->i_project_id ? 'Edit' : 'Add'); ?> Project</li>
 		</ol>
 	</div>
 </div>
@@ -19,18 +19,18 @@
 
 	<div class="panel-heading">
           <div class="panel-btns">
-            <a href="" class="panel-close">&times;</a>
+            <!-- a href="" class="panel-close">&times;</a -->
             <a href="" class="minimize">&minus;</a>
           </div>
-          <h4 class="panel-title"><?php echo ($this->project_id ? 'Edit' : 'Add'); ?> Project</h4>
+          <h4 class="panel-title"><?php echo ($this->i_project_id ? 'Edit' : 'Add'); ?> Project</h4>
         </div>
 		 <form id="addProjectForm" name="addProjectForm" class="form-horizontal form-bordered" method="POST" enctype="multipart/form-data">
         <div class="panel-body panel-body-nopadding">
-            <?php echo ($this->project_id ? '<input type="hidden" value="'.$this->project_id.'" name="project_id" />' : '');?>
+            <?php echo ($this->i_project_id ? '<input type="hidden" value="'.$this->i_project_id.'" name="i_project_id" />' : '');?>
             <div class="form-group">
-              <label class="col-sm-3 control-label">Title</label>
+              <label class="col-sm-3 control-label">Name<span class="asterisk">*</span></label>
               <div class="col-sm-6">
-                <input type="text" placeholder="Enter Title" class="form-control" name="title" id="title" value="<?php echo $this->project['title'];?>"/>
+                <input type="text" placeholder="Enter Name" class="form-control" name="vc_name" id="vc_name" value="<?php echo $this->project['vc_name'];?>"/>
               </div>
             </div>
             <div class="form-group">
@@ -38,27 +38,31 @@
              <label class="col-sm-3 control-label">Description</label>
               <div class="col-sm-9">
                
-               <textarea id="description" name="description" placeholder="Enter description here..." class="form-control" rows="10"><?php echo $this->project['description'];?></textarea>
+               <textarea id="vc_description" name="vc_description" placeholder="Enter description here..." class="form-control" rows="10"><?php echo $this->project['vc_description'];?></textarea>
               
               </div>
             </div>     
+             <div class="form-group">
+             <label class="col-sm-3 control-label">Comments</label>
+              <div class="col-sm-9">
+               <textarea id="vc_comment" name="vc_comment" placeholder="Enter comments here..." class="form-control" rows="10"><?php echo $this->project['vc_comment'];?></textarea>
+              </div>
+            </div>     
             <div class="form-group">
-              <label class="col-sm-3 control-label">Business Unit</label>
+              <label class="col-sm-3 control-label">Business Unit<span class="asterisk">*</span></label>
               <div class="col-sm-5">
                
-                <select  class="form-control mb15" id="business_unit" name="business_unit">
+                <select  class="form-control mb15" id="i_ref_bu_id" name="i_ref_bu_id">
                   <option value="">Assing project to business unit</option> 
-                  <?php if(is_array($this->businessunit)) { 
-                        foreach($this->businessunit as $businessunit) {
+                  <?php if(is_array($this->business_units)) { 
+                        foreach($this->business_units as $businessunit) {
                       ?>
-                    <option value="<?php echo $businessunit['id']; ?>"
+                    <option value="<?php echo $businessunit['i_bu_id']; ?>"
                     
-                    <?php if(isset($this->project['business_project']) && is_array($this->project['business_project'])) {
-                           if($this->project['business_project'][0]['businessunit_id']==$businessunit['id']) {
+                    <?php if($this->project['i_ref_bu_id']==$businessunit['i_bu_id']) {
                             echo "selected=selected";
-                        }
                     } ?>
-                    ><?php echo $businessunit['title']; ?></option>
+                    ><?php echo $businessunit['vc_short_name']; ?></option>
                   <?php } } ?>
                 </select>
               
@@ -67,10 +71,9 @@
             <div class="form-group">
               <label class="col-sm-3 control-label">Status</label>
               <div class="col-sm-5">
-               
-                <select  class="form-control mb15" id="pStatus" name="pStatus">
+                <select  class="form-control mb15" id="i_status" name="i_status">
                   <option value="1">Active</option>
-                  <option value="0" <?php echo (!$this->project['status'] ? 'selected="selected"' : '');?>>Inactive</option>
+                  <option value="0" <?php echo (!$this->project['i_status'] ? 'selected="selected"' : '');?>>Inactive</option>
                 </select>
               
               </div>
@@ -79,7 +82,7 @@
         <div class="panel-footer">
 			 <div class="row">
 				<div class="col-sm-6 col-sm-offset-3">
-				  <input type="submit" data-after-loading-text="<?php echo ($this->project_id ? 'Update' : 'Add'); ?>" data-loading-text="Please Wait..." id="addPageBtn" name="addPageBtn" value="<?php echo ($this->page_id ? 'Update' : 'Add');?>" class="btn btn-primary">&nbsp;
+				  <input type="submit" data-after-loading-text="<?php echo ($this->i_project_id ? 'Update' : 'Add'); ?>" data-loading-text="Please Wait..." id="addPageBtn" name="addPageBtn" value="<?php echo ($this->i_project_id ? 'Update' : 'Add');?>" class="btn btn-primary">&nbsp;
 				  <a href="<?php echo $this->basepath('user/department');?>" class="btn btn-default">Cancel</a>
 				</div>
 			 </div>

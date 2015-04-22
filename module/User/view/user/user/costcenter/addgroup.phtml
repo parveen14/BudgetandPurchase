@@ -1,8 +1,8 @@
-<?php $this->headTitle(($this->costcenter_id ? 'Edit Cost Center' : 'Add Cost Center'));
+<?php $this->headTitle(($this->i_ccgroup_id ? 'Edit Cost Center' : 'Add Cost Center'));
 
-	if(isset($this->costcentegroup['costcenter_group_costcenter']) and !empty($this->costcentegroup['costcenter_group_costcenter'])) {
-		$costcenter=$this->costcentegroup['costcenter_group_costcenter'];
-		$costcenterarray = array_map(function ($costcenter) { return $costcenter['costcenter_id']; }, $costcenter);
+	if(isset($this->costcentegroup['costcenter_costgroup']) and !empty($this->costcentegroup['costcenter_costgroup'])) {
+		$costcenter=$this->costcentegroup['costcenter_costgroup'];
+		$costcenterarray = array_map(function ($costcenter) { return $costcenter['i_ref_cc_id']; }, $costcenter);
 	} else {
 		$costcenterarray=array();
 	}
@@ -10,14 +10,14 @@
 ?>
 <div class="pageheader">
 	<h2>
-		<i class="fa fa-file"></i> Cost Center Group <span><?php echo ($this->costcenter_group_id ? 'Edit' : 'Add'); ?></span>
+		<i class="fa fa-file"></i> Cost Center Group <span><?php echo ($this->i_ccgroup_id ? 'Edit' : 'Add'); ?></span>
 	</h2>
 	<div class="breadcrumb-wrapper">
 		<span class="label">You are here:</span>
 		<ol class="breadcrumb">
-			<li><a href="<?php echo $this->basePath('user');?>">User</a></li>
+			<li><a href="<?php echo $this->basePath('dashboard');?>">Dashboard</a></li>
 			<li><a href="<?php echo $this->basePath('user/ccgroup');?>">Cost Center Group</a></li>
-			<li class="active"><?php echo ($this->costcenter_group_id ? 'Edit' : 'Add'); ?></li>
+			<li class="active"><?php echo ($this->costcenter_group_id ? 'Edit' : 'Add'); ?> Cost Center Group</li>
 		</ol>
 	</div>
 </div>
@@ -28,32 +28,31 @@
 
 	<div class="panel-heading">
           <div class="panel-btns">
-            <a href="" class="panel-close">&times;</a>
+            <!-- a href="" class="panel-close">&times;</a -->
             <a href="" class="minimize">&minus;</a>
           </div>
-          <h4 class="panel-title"><?php echo ($this->costcenter_group_id ? 'Edit' : 'Add'); ?> Cost Center Group </h4>
+          <h4 class="panel-title"><?php echo ($this->i_ccgroup_id ? 'Edit' : 'Add'); ?> Cost Center Group </h4>
         </div>
 		 <form id="addCostcentergroupForm" name="addCostcentergroupForm" class="form-horizontal form-bordered" method="POST" enctype="multipart/form-data">
         <div class="panel-body panel-body-nopadding">
-            <?php echo ($this->costcenter_group_id ? '<input type="hidden" value="'.$this->costcenter_group_id.'" name="costcenter_group_id" />' : '');?>
+            <?php echo ($this->i_ccgroup_id ? '<input type="hidden" value="'.$this->i_ccgroup_id.'" name="i_ccgroup_id" />' : '');?>
             <div class="form-group">
-              <label class="col-sm-3 control-label">Title</label>
+              <label class="col-sm-3 control-label">Title<span class="asterisk">*</span></label>
               <div class="col-sm-6">
-                <input type="text" placeholder="Enter Title" class="form-control" name="title" id="title" value="<?php echo $this->costcentegroup['title'];?>"/>
+                <input type="text" placeholder="Enter Title" class="form-control" name="vc_account_group" id="vc_account_group" value="<?php echo $this->costcentegroup['vc_account_group'];?>"/>
               </div>
             </div>
 			<div class="form-group">
               
-             <label class="col-sm-3 control-label">Cost Center</label>
+             <label class="col-sm-3 control-label">Cost Center<span class="asterisk">*</span></label>
               <div class="col-sm-4">
-				   <select class="form-control mb15"  id="costcenter" name="costcenter[]" multiple="multiple">
-					
+				   <select class="form-control mb15"  id="costcenter_costgroup" name="costcenter_costgroup[]" multiple="multiple">
 						<?php
-							if(is_array($this->costcenter) ) {
-								foreach($this->costcenter as $costcenter) {
-									echo "<option value=".$costcenter['id'];
-									if(in_array($costcenter['id'],$costcenterarray)) { echo " selected='selected'"; }
-									echo ">".$costcenter['title']."</option>";
+							if(is_array($this->cost_center) ) {
+								foreach($this->cost_center as $costcenter) {
+									echo "<option value=".$costcenter['i_cc_id'];
+									if(in_array($costcenter['i_cc_id'],$costcenterarray)) { echo " selected='selected'"; }
+									echo ">".$costcenter['vc_name']."</option>";
 								}
 							}
 						?>
@@ -63,7 +62,7 @@
 			<div class="form-group">
              <label class="col-sm-3 control-label">Description</label>
               <div class="col-sm-6">
-                <textarea placeholder="Enter Description" class="form-control" name="description" id="description"><?php echo $this->costcentegroup['description'];?></textarea>
+                <textarea placeholder="Enter Description" class="form-control" name="vc_description" id="vc_description"><?php echo $this->costcentegroup['vc_description'];?></textarea>
               </div>
             </div>
 						
@@ -71,9 +70,9 @@
               <label class="col-sm-3 control-label">Status</label>
               <div class="col-sm-5">
                
-                <select  class="form-control mb15" id="pstatus" name="status">
+                <select  class="form-control mb15" id="i_status" name="i_status">
                   <option value="1">Active</option>
-                  <option value="0" <?php echo (!$this->costcente['status'] ? 'selected="selected"' : '');?>>Inactive</option>
+                  <option value="0" <?php echo (!$this->costcente['i_status'] ? 'selected="selected"' : '');?>>Inactive</option>
                 </select>
               
               </div>
@@ -82,7 +81,7 @@
         <div class="panel-footer">
 			 <div class="row">
 				<div class="col-sm-6 col-sm-offset-3">
-				  <input type="submit" data-after-loading-text="<?php echo ($this->costcenter_id ? 'Update' : 'Add'); ?>" data-loading-text="Please Wait..." id="addPageBtn" name="addPageBtn" value="<?php echo ($this->costcenter_id ? 'Update' : 'Add');?>" class="btn btn-primary">&nbsp;
+				  <input type="submit" data-after-loading-text="<?php echo ($this->i_ccgroup_id ? 'Update' : 'Add'); ?>" data-loading-text="Please Wait..." id="addPageBtn" name="addPageBtn" value="<?php echo ($this->i_ccgroup_id ? 'Update' : 'Add');?>" class="btn btn-primary">&nbsp;
 				  <a href="<?php echo $this->basepath('user/level');?>" class="btn btn-default">Cancel</a>
 				</div>
 			 </div>
@@ -91,5 +90,5 @@
       </div>
 </div><!-- contentpanel -->
 <?php 
-   $this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/costcenter.js' );
+   $this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/ccgroup.js' );
 ?>

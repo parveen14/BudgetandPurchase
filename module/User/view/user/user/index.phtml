@@ -1,71 +1,86 @@
+<?php $this->headTitle('Users');?>
 <div class="pageheader">
-      <h2><i class="fa fa-home"></i><?php echo ucfirst($this->layout()->userSession->data->username); ?>'s Dashboard <span></span></h2>
-      <div class="breadcrumb-wrapper">
-        <span class="label">You are here:</span>
-        <ol class="breadcrumb">
-          <li class="active">Dashboard</li>
-        </ol>
-      </div>
-    </div>
- <div class="contentpanel">   
-    <div class="row">
+	<h2>
+		<i class="fa fa-user"></i> Levels <span>Listing</span>
+	</h2>
+	<div class="breadcrumb-wrapper">
+		<span class="label">You are here:</span>
+		<ol class="breadcrumb">
+			<li><a href="<?php echo $this->basePath('dashboard');?>">Dashboard</a></li>
+			<li class="active">Users</li>
+			<li><a href="<?php echo BASE_URL; ?>user/adduser" class="btn btn-success btn-xs">Add New User</a></li>
+		</ol>
+	</div>
+</div>
+  <?php 
+ 
+	if($this->messages) {
         
-        <div class="col-sm-6 col-md-3">
-          <div class="panel panel-success panel-stat">
-            <div class="panel-heading">
-              
-              <div class="stat">
-                <div class="row">
-                  <div class="col-xs-4">
-                    <img src="images/is-user.png" alt="">
-                  </div>
-                  <div class="col-xs-8">
-                    <small class="stat-label">Groups</small>
-                    <h1><?php echo $this->totalGroup; ?></h1>
-                  </div>
-                </div><!-- row -->
-                
-                <div class="mb15"></div>
-                
-                <div class="row">
-                  <div class="col-xs-6">
-                    <small class="stat-label">Roles Created</small>
-                    <h4><?php echo $this->totalRole; ?></h4>
-                  </div>
-                  
-                  
-                </div><!-- row -->
-              </div><!-- stat -->
-              
-            </div><!-- panel-heading -->
-          </div><!-- panel -->
-        </div><!-- col-sm-6 -->
+       echo '<div class="panel-body"><div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        '.$this->messages[0].'
+        </div></div>';
+    }
+     if($this->error_messages) {
         
-        <div class="col-sm-6 col-md-3">
-          <div class="panel panel-danger panel-stat">
-            <div class="panel-heading">
-              
-              <div class="stat">
-                <div class="row">
-                  <div class="col-xs-4">
-                    <img src="images/is-document.png" alt="">
-                  </div>
-                  <div class="col-xs-8">
-                    <small class="stat-label">Business Units</small>
-                    <h1><?php echo $this->totalBusinessunit; ?></h1>
-                  </div>
-                </div><!-- row -->
-                
-                <div class="mb15"></div>
-                
-                <small class="stat-label">Departments</small>
-                <h4><?php echo $this->totalDepartment; ?></h4>
-                  
-              </div><!-- stat -->
-              
-            </div><!-- panel-heading -->
-          </div><!-- panel -->
-        </div><!-- col-sm-6 -->
-        
-      </div>
- </div>
+       echo '<div class="panel-body"><div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        '.$this->error_messages[0].'
+        </div></div>';
+    } ?>     
+<div class="contentpanel">
+	<!-- content goes here... -->
+    <div class="table-responsive">
+          <table class="table" id="tableUsers">
+              <thead>
+                 <tr>
+                    <th>S.No</th> 
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th></th>
+                 </tr>
+              </thead>
+               
+              <tbody>
+               <?php  
+					$Serial=1;$Listing="";
+					if(is_array($this->userList)) {
+ 					foreach($this->userList as $userList) {
+						
+						if($userList['i_cu_status']=='1') {
+ 							$statusImage='<img data-tooltip="tooltip" src="'.$this->basePath ().'/images/status_green.png"  alt="Deactive" data-original-title="Active , click here to deactivate">';
+ 						 } else {
+ 							$statusImage='<img data-tooltip="tooltip" src="'.$this->basePath ().'/images/status_red.png"  alt="Deactive" data-original-title="De-active , click here to Activate">';
+				
+ 						 }
+ 						 
+ 						$Listing .= '<tr class="gradeU">';
+						$Listing .= '<td>'.$Serial++.'</td>';
+ 						$Listing .= '<td class="center"> '.$userList['vc_fname'].' '.$userList['vc_lname'].'</td>';
+ 						$Listing .= '<td class="center"> '.$userList['vc_email'].'</td>';
+ 						$Listing .= '<td class="center"><a href="javascript:;" class="activeDeactiveCompanyUser" 
+                                             data-id='.$userList['i_ref_company_id'].' data-field="i_ref_company_id" data-id-1='.$userList['i_user_id'].' data-field-1="i_ref_user_id" data-type="user_details" data-status='.$userList['i_cu_status'].'>'.$statusImage.'</a></td>';
+						if($userList['activate_token']!="") {
+							$accountstatus="Email not confirmed";
+						} else {
+							$accountstatus="Email confirmed";
+						}
+ 						 $Listing .= '<td class="center">'.$accountstatus.'</td>';
+ 						 $Listing .= '</tr>';  
+ 					}
+					} else {
+					    $Listing= "<tr><td colspan=4>No Record to List</td></tr>";
+					    
+					}
+ 					echo $Listing;
+				?> 
+              </tbody>
+           </table>
+          </div><!-- table-responsive -->
+</div>
+<?php 
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/common/common.js' );
+	$this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/users.js' );
+
+?>

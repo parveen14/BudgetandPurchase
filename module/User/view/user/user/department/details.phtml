@@ -1,0 +1,108 @@
+<?php $this->headTitle('Department Details');?>
+<div class="pageheader">
+	<h2>
+		<i class="fa fa-user"></i> Department <span>Details</span>
+	</h2>
+	<div class="breadcrumb-wrapper">
+		<span class="label">You are here:</span>
+		<ol class="breadcrumb">
+			<li><a href="<?php echo $this->basePath('dashboard');?>">Dashboard</a></li>
+			<li><a href="<?php echo $this->basePath('user/department');?>">Department</a></li>
+			<li class="active">Details</li>
+		</ol>
+	</div>
+</div>
+  <?php if($this->messages) {
+        
+       echo '<div class="panel-body"><div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        '.$this->messages[0].'
+        </div></div>';
+    }
+     if($this->error_messages) {
+        
+       echo '<div class="panel-body"><div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        '.$this->error_messages[0].'
+        </div></div>';
+    } 
+   // echo "<pre>";
+   // print_r($this->departments); die;
+    ?>      <div class="contentpanel">
+      
+      <div class="row">
+        <div class="col-sm-3">
+           <?php if (!empty($this->details->data->vc_logo) && file_exists ( 'public/uploads/userImages/'.$this->details->data->vc_logo)) :?>
+				<img src="<?php echo $this->basePath('uploads/userImages/'.($this->details->data->vc_logo));?>" class="thumbnail img-responsive">
+          <?php  else : ?>
+			  <img src="<?php echo $this->basePath('images/photos/profile-1.png');?>" class="thumbnail img-responsive">
+			<?php endif;?>
+          <div class="mb30"></div>  
+        </div><!-- col-sm-3 -->
+        <style>.companynamet span{ color:#333;}
+        .profileWhiteDiv{ width:100%; padding:10px; background:#fff;}
+        </style>
+        <div class="col-sm-9">
+          
+          <div class="profile-header">
+            <h2 class="profile-name"><?php echo $this->departments['vc_name']; ?></h2>
+            <div class="">
+            	<h4 class="text-primary companynamet"><span>Company -</span> <?php echo $this->details->data->vc_company_name; ?></h4>
+            </div>
+            <div class="profileWhiteDiv">
+             <div class="profile-position">Status - <span class="text-success"> <?php echo ($this->departments['i_status']==1?'Activated':'Deactivated'); ?></span></div>
+            <div class="profile-location"><i class="fa fa-calendar"></i> Created date - <?php echo date("Y-m-d", strtotime($this->departments['dt_created'])); ?></div>
+            <div class="profile-position"><i class="fa fa-calendar"></i> Last modified date - <?php echo date("Y-m-d", strtotime($this->departments['dt_modified'])); ?></div>
+            
+            <div class="mb20"></div>
+            <h5 class="subtitle mb10">About</h5>
+            <p class="mb10"><?php echo $this->departments['vc_description']; ?></p>
+            </div>
+            <div class="mb20"></div>
+            
+           <button class="btn btn-success mr5" onclick="window.print();"><i class="fa fa-print"></i> Print this page</button>
+           
+          </div><!-- profile-header -->
+        
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <h5 class="subtitle mb5">List of business unit associated with this department: </h5>
+          <div class="mb20"></div>
+          <div class="table-responsive">
+		  <table class="table mb30">
+            <thead>
+              <tr>
+				<th>S.No</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Created Date</th>
+                <th>Modified Date</th>
+              </tr>
+            </thead>
+            <tbody>
+			<?php if(is_array($this->businessunit)) { $i=1;
+				foreach($this->businessunit as $businessunit) { 
+					
+				?>
+              <tr>
+				<td><?php echo $i++; ?></td>
+				<td><a href="<?php echo $this->url('businessunit', array('action' => 'bussinessunitdetails', 'slug' =>$businessunit['i_bu_id'])); ?>"><?php echo $businessunit['vc_short_name']; ?></a></td>
+                <td><?php echo $businessunit['vc_description']; ?></td>
+                <td><?php echo date("Y-m-d", strtotime($businessunit['dt_created'])); ?></td>
+                <td><?php echo date("Y-m-d", strtotime($businessunit['dt_modified'])); ?></td>
+              </tr>
+              <?php } } else {
+					echo "<tr><td colspan=5><b>No department registred for this business unit.</b></td></tr>";
+				 }?>
+            </tbody>
+          </table>
+          </div><!-- table-responsive -->
+        </div>
+        </div>
+        <div class="mb20"></div>
+        <!-- tab-content -->
+        </div><!-- col-sm-9 -->
+      </div><!-- row -->
+<?php 
+    $this->inlineScript ()->prependFile ( $this->basePath () . '/js/common/common.js' );
+    $this->inlineScript ()->prependFile ( $this->basePath () . '/js/user/businessunit.js' );
+?>

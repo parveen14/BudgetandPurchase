@@ -18,6 +18,7 @@ use Zend\Filter\File\Rename;
 use Zend\Session\SessionManager;
 use Zend\Session\Storage\SessionStorage;
 use Common\Constants\Constants;
+use Auth\Form\ActivateuserForm;
 
 class AuthController extends AbstractActionController
 {
@@ -57,15 +58,26 @@ class AuthController extends AbstractActionController
         return $this->authservice;
     }
     
+    public function getAdminAuthService()
+    {
+        if (! $this->authservice) {
+            $this->authservice = $this->getServiceLocator()
+                                      ->get('AdminAuthService');
+        }
+
+        return $this->authservice;
+    }
+    
 	public function getSessionStorage()
     {
         if (! $this->storage) {
             $this->storage = $this->getServiceLocator()
                                   ->get('Auth\Model\MyAuthStorage');
         }
-
         return $this->storage;
     }
+    
+    
 	
     public function getRegisterService(){
     	if (! $this->register) {
@@ -83,9 +95,10 @@ class AuthController extends AbstractActionController
         return $this->forgotpassword;
     }
     
+    
 	public function loginAction()
     {
-       // $plugin = $this->SnsPlugin ();
+
     	$this->layout('layout/login');
         if ($this->getAuthService()->hasIdentity()) {
             return $this->redirect()->toRoute('user');
@@ -109,35 +122,73 @@ class AuthController extends AbstractActionController
 
         $request = $this->getRequest();
        
-        if ($request->isPost() && $request->getPost('email_id') && $request->getPost('password')) {
+        if ($request->isPost() && $request->getPost('vc_email') && $request->getPost('vc_password')) {
             $form->setData($request->getPost());
          
             if ($form->isValid()) {
                
-                $this->getAuthService()->getAdapter()
-                                       ->setIdentity($request->getPost('email_id'))
-                                       ->setCredential($request->getPost('password'));
+               if($request->getPost('type')=='Company') {
+				   $checkauth = $this->getAdminAuthService();
+				} else {
+					$checkauth = $this->getAuthService();
+				}
+				
+                $checkauth->getAdapter()
+                                       ->setIdentity($request->getPost('vc_email'))
+                                       ->setCredential($request->getPost('vc_password'));
+                
+                
+                $result = $checkauth->authenticate();
+              
+                $isActivated = $this->getRegisterService()->checkIfActivated($checkauth->getAdapter()->getIdentity(),$request->getPost('type'));
+              
+                if ($result->isValid() && (isset($isActivated['i_status']) && $isActivated['i_status'])) {
+                    
+                   $columnsToOmit = array('vc_password');
+                   $user = $checkauth->getAdapter()->getResultRowObject(null, $columnsToOmit);
 
-                $result = $this->getAuthService()->authenticate();
-
-                $isActivated = $this->getRegisterService()->checkIfActivated($this->getAuthService()->getAdapter()->getIdentity());
-                if ($result->isValid() && (isset($isActivated['status']) && $isActivated['status'])) {
-                   $columnsToOmit = array('password');
-                   $user = $this->getAuthService()->getAdapter()->getResultRowObject(null, $columnsToOmit);
-
-                	$redirect = 'user';
+                	$redirect = 'dashboard';
 
                     if ($request->getPost('rememberme') == 1 ) {
                         $this->getSessionStorage()->setRememberMe(1);
-                        $this->getAuthService()->setStorage($this->getSessionStorage());
+                        $checkauth->setStorage($this->getSessionStorage());
                     }
                    
                     
-                    $this->getAuthService()->setStorage($this->getSessionStorage());
-                    $this->getAuthService()->getStorage()->write($request->getPost('email_id'));
+                    $checkauth->setStorage($this->getSessionStorage());
+                    $checkauth->getStorage()->write($request->getPost('vc_email'));
 
                     $userSession = new Container('user');
+                    $userSession->type = $request->getPost('type');
                     $userSession->role = 'user';
+                    if($request->getPost('type')=='Company') {
+						$user->vc_fname=$user->vc_company_name;
+						$user->vc_lname="";
+					} else {
+						
+						$usercompanies=$this->getCommonService()->getUsercompanies($user->i_user_id);
+						if($usercompanies) {
+						    $userSession->usercompanies=$usercompanies;
+						    $user->i_company_id=$usercompanies[0]['i_ref_company_id'];
+						    $user->vc_company_name=$usercompanies[0]['vc_company_name'];
+						    $user->vc_logo=$usercompanies[0]['vc_logo'];
+						} else {
+						   $checkauth->clearIdentity();
+						   $redirect = 'login';
+						   $this->flashmessenger()->addErrorMessage('You are not assigned to any company');
+						}
+						
+						$userpermisions=$this->getCommonService()->getUserpermissions($user->i_user_id, $user->i_company_id);
+					   
+					   if(!$userpermisions) {
+					       $checkauth->clearIdentity();
+						   $redirect = 'login';
+						   $this->flashmessenger()->addErrorMessage('No permissions assigned to you');				
+					   } else {
+					       $userSession->userpermissions=$userpermisions;
+					   }
+					}
+					
                     $userSession->data = $user; 
                 }
                 else{
@@ -151,7 +202,7 @@ class AuthController extends AbstractActionController
                         break;
                         default:
                         	$redirect = 'login';
-                        	$this->getAuthService()->clearIdentity();
+                        	$checkauth->clearIdentity();
                         	if(!$isActivated['activate_token']){
                         		$this->flashmessenger()->addErrorMessage('Account Deactivated');
                         	}
@@ -162,7 +213,9 @@ class AuthController extends AbstractActionController
                     }
                 }
             }
-        }
+        }else{
+         $this->flashmessenger()->addErrorMessage('Email and password required');
+       }
 
         return $this->redirect()->toRoute($redirect);
     }
@@ -266,7 +319,9 @@ class AuthController extends AbstractActionController
     
     public function confirmforgotAction()
     {
+        try{
         $params = $this->getRequest()->getPost()->toArray();
+        
         $emailExists = $this->getForgotpasswordService()->emailExistsPassword($params['email_id'],$this->getAdapter());
 
         $isValid = true;
@@ -281,14 +336,17 @@ class AuthController extends AbstractActionController
             $results = $this->getForgotpasswordService()->sendFogotPasswordLink($emailExists, $this->getAdapter());
             $this->flashmessenger()->addMessage('Check email id to reset password');
         }
+        } catch (\Exception $e){
+            $this->flashmessenger()->addErrorMessage($e->getMessage());
+        }
         return $this->redirect()->toRoute('forgotpassword');
     }
     
     
-    public function activateAction()
+    public function activatecompanyAction()
     {
     	$activate_token = $this->getEvent()->getRouteMatch()->getParam('activate_token');
-    	$results = $this->getRegisterService()->activateUser($activate_token);
+    	$results = $this->getRegisterService()->activateUser($activate_token,'company');
 		if($results){
     		$this->flashmessenger()->addMessage(Constants::ACCOUNT_ACTIVATED_MESSAGE);
 		}
@@ -296,6 +354,57 @@ class AuthController extends AbstractActionController
 			$this->flashmessenger()->addErrorMessage(Constants::ACTIVATION_LINK_EXPIRED);
 		}
     	return $this->redirect()->toRoute('login');
+    }
+    
+    public function activateuserAction()
+    {  
+        try {
+        if($this->getRequest()->isPost()) {
+         
+            $requestQuery = $this->params();
+
+            $userData = array(
+                'vc_email' => $requestQuery->fromPost('vc_email'),
+                'vc_fname' => $requestQuery->fromPost('vc_fname'),
+                'vc_lname' => $requestQuery->fromPost('vc_lname'),
+                'vc_password' => $requestQuery->fromPost('vc_password'),
+                'activate_token'=> $requestQuery->fromPost('activate_token'),
+            );
+            $return=$this->getRegisterService()->activateCompanyuser($userData);
+            if($return){
+                $this->flashmessenger()->addMessage(Constants::ACCOUNT_ACTIVATED_MESSAGE);
+            }
+            else{
+                $this->flashmessenger()->addErrorMessage(Constants::ACTIVATION_LINK_EXPIRED);
+            }
+        } else {
+            $activate_token = $this->getEvent()->getRouteMatch()->getParam('activate_token');
+            $this->layout('layout/login');
+            if(!empty($activate_token)) {
+                $data=$this->getCommonService()->getDatasets('users',array('vc_email'),array('activate_token'=>$activate_token));
+               if($data) {
+                   $form = new ActivateuserForm();
+          
+                $form->get('submit')->setValue('Activate');
+                $form->get('vc_email')->setValue($data[0]['vc_email']);
+                $form->get('activate_token')->setValue($activate_token);
+                
+                return array(
+                    'form'      => $form,
+                    'messages'  => $this->flashmessenger()->getMessages(),
+                    'error_messages' => $this->flashmessenger()->getErrorMessages(),
+                );
+               } else {
+                   $this->flashmessenger()->addErrorMessage(Constants::SOMTHING_MIGHT_WENT_WRONG);
+               }
+            } else {
+                $this->flashmessenger()->addErrorMessage(Constants::ACTIVATION_LINK_EXPIRED);
+            }
+        }
+        } catch (\Exception $e) {
+            $this->flashmessenger()->addErrorMessage($e->getMessage());
+        }
+        return $this->redirect()->toRoute('login');
     }
     
     public function resetpasswordAction()
@@ -358,7 +467,7 @@ class AuthController extends AbstractActionController
     public function getCommonService(){
         if (!$this->commonService) {
             $this->commonService = $this->getServiceLocator()
-            ->get('Connekd\Model\Common');
+            ->get('Common\Service\CommonServiceInterface');
         }
         return $this->commonService;
     }
